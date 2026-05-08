@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Plane } from 'lucide-react';
+import Login from './Login';
 
 export default function Navbar({ user, onSignOut }) {
   return (
@@ -55,7 +56,10 @@ export default function Navbar({ user, onSignOut }) {
             </button>
           </div>
         ) : (
-          <span className="cartoon-font" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', transform: 'rotate(2deg)' }}>Your Fun Planner!</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span className="cartoon-font" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', transform: 'rotate(2deg)' }}>Your Fun Planner!</span>
+            <Login compact />
+          </div>
         )}
       </div>
     </nav>

@@ -9,6 +9,12 @@
   --marker-yellow: #FFD166;
   --marker-green: #06D6A0;
 
+  /* Soft Pastel Backgrounds */
+  --bg-yellow: #FFF8E1;
+  --bg-blue: #E3F2FD;
+  --bg-green: #E8F5E9;
+  --bg-red: #FFEBEE;
+
   /* Global Vars */
   --bg-color: var(--paper-white);
   --text-primary: var(--ink-black);
@@ -87,6 +93,9 @@ h1, h2, h3, h4, h5, h6, .cartoon-font {
 
 .comic-box-green { border-color: var(--marker-green); box-shadow: 6px 6px 0px var(--marker-green); }
 .comic-box-green:hover { box-shadow: 10px 10px 0px var(--marker-green); }
+
+.comic-box-red { border-color: var(--marker-red); box-shadow: 6px 6px 0px var(--marker-red); }
+.comic-box-red:hover { box-shadow: 10px 10px 0px var(--marker-red); }
 
 /* Hero Section */
 .hero {
