@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Bookmark, Trash2, Eye, Share2 } from 'lucide-react';
-import { saveTrip, subscribeToSavedTrips, deleteSavedTrip } from '../services/firestoreService';
+import { saveTrip, subscribeToSavedTrips, deleteSavedTrip, subscribeToSharedTrips } from '../services/firestoreService';
 import ItineraryMap from '../components/ItineraryMap';
 import TripChatbot from '../components/TripChatbot';
 import ShareTripModal from '../components/ShareTripModal';
@@ -96,6 +96,14 @@ export default function Dashboard({ user }) {
   useEffect(() => {
     if (!user?.uid) return;
     const unsub = subscribeToSavedTrips(user.uid, setSavedTrips);
+    return () => unsub();
+  }, [user?.uid]);
+
+  // Subscribe to shared trips (trips friends shared with me)
+  const [sharedTrips, setSharedTrips] = useState([]);
+  useEffect(() => {
+    if (!user?.uid) return;
+    const unsub = subscribeToSharedTrips(user.uid, setSharedTrips);
     return () => unsub();
   }, [user?.uid]);
 
@@ -854,6 +862,70 @@ export default function Dashboard({ user }) {
                     <Trash2 size={16} />
                   </button>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Shared With You Section */}
+      {sharedTrips.length > 0 && (
+        <div className="comic-box" style={{ padding: '2rem', background: 'var(--paper-white)', marginBottom: '2rem' }}>
+          <h2 className="cartoon-font" style={{ margin: '0 0 1.5rem 0', fontSize: '2.5rem', color: 'var(--ink-black)' }}>
+            🤝 Shared With You
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            {sharedTrips.filter(t => t.createdBy !== user?.uid).map((trip) => (
+              <div key={trip.id} style={{
+                border: '2px solid var(--ink-black)', borderRadius: '8px',
+                padding: '1.25rem', background: 'white',
+                boxShadow: '4px 4px 0px var(--ink-black)',
+                display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                transition: 'transform 0.1s',
+              }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translate(-2px, -2px)'; e.currentTarget.style.boxShadow = '6px 6px 0px var(--ink-black)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translate(0)'; e.currentTarget.style.boxShadow = '4px 4px 0px var(--ink-black)'; }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.25rem' }}>
+                  <div style={{
+                    width: '28px', height: '28px', borderRadius: '50%',
+                    background: 'var(--marker-blue)', color: 'white',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: '2px solid var(--ink-black)', fontSize: '0.8rem', fontWeight: 'bold', flexShrink: 0,
+                  }}>
+                    {(trip.creatorName || '?')[0].toUpperCase()}
+                  </div>
+                  <span style={{ fontFamily: 'Nunito, sans-serif', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    Shared by <strong>{trip.creatorName || 'a friend'}</strong>
+                  </span>
+                </div>
+                <h3 className="cartoon-font" style={{ margin: 0, fontSize: '1.6rem', color: 'var(--marker-green)' }}>
+                  ✈️ {trip.destination || 'Unknown'}
+                </h3>
+                <p style={{ margin: 0, fontFamily: 'Nunito, sans-serif', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                  {trip.startDate} → {trip.endDate}
+                </p>
+                {trip.itinerary?.summary && (
+                  <p style={{ margin: 0, fontFamily: 'Nunito, sans-serif', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                    {trip.itinerary.summary.substring(0, 100)}...
+                  </p>
+                )}
+                <button onClick={() => {
+                  setItinerary(trip.itinerary);
+                  setDestination(trip.destination || '');
+                  setStartDate(trip.startDate || '');
+                  setEndDate(trip.endDate || '');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }} style={{
+                  marginTop: 'auto', padding: '0.5rem', borderRadius: '6px',
+                  border: '2px solid var(--ink-black)',
+                  background: 'var(--marker-green)', color: 'white',
+                  fontFamily: 'Nunito, sans-serif', fontWeight: 'bold', fontSize: '0.9rem',
+                  cursor: 'pointer', boxShadow: '2px 2px 0px var(--ink-black)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                }}>
+                  <Eye size={16} /> View Plan
+                </button>
               </div>
             ))}
           </div>

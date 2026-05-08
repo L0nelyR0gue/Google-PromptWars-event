@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Check, X } from 'lucide-react';
+import { Bell, Check, X, Plane } from 'lucide-react';
 import {
   subscribeToFriendRequests,
   acceptFriendRequest,
   rejectFriendRequest,
+  subscribeToSharedTrips,
 } from '../services/firestoreService';
 
 export default function Notifications({ user }) {
   const [isOpen, setIsOpen] = useState(false);
   const [requests, setRequests] = useState([]);
+  const [sharedTrips, setSharedTrips] = useState([]);
   const [processing, setProcessing] = useState(null); // requestId being processed
   const dropdownRef = useRef(null);
 
@@ -19,6 +21,18 @@ export default function Notifications({ user }) {
     const unsub = subscribeToFriendRequests(user.email, setRequests);
     return () => unsub();
   }, [user?.email]);
+
+  // Real-time subscription to shared trips (show new ones as notifications)
+  const [seenSharedIds, setSeenSharedIds] = useState(new Set());
+  useEffect(() => {
+    if (!user?.uid) return;
+    const unsub = subscribeToSharedTrips(user.uid, (trips) => {
+      // Only show trips created by others as notifications
+      const fromOthers = trips.filter(t => t.createdBy !== user.uid);
+      setSharedTrips(fromOthers);
+    });
+    return () => unsub();
+  }, [user?.uid]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -53,6 +67,14 @@ export default function Notifications({ user }) {
     }
   };
 
+  const dismissSharedTrip = (tripId) => {
+    setSeenSharedIds(prev => new Set([...prev, tripId]));
+  };
+
+  // Filter out already-seen shared trips for badge count
+  const unseenSharedTrips = sharedTrips.filter(t => !seenSharedIds.has(t.id));
+  const totalCount = requests.length + unseenSharedTrips.length;
+
   return (
     <div ref={dropdownRef} style={{ position: 'relative' }}>
       {/* Bell Button */}
@@ -64,10 +86,10 @@ export default function Notifications({ user }) {
           cursor: 'pointer', padding: '4px',
           display: 'flex', alignItems: 'center',
         }}
-        aria-label={`Notifications (${requests.length} pending)`}
+        aria-label={`Notifications (${totalCount} pending)`}
       >
-        <Bell size={24} color="var(--ink-black)" fill={requests.length > 0 ? 'var(--marker-yellow)' : 'none'} />
-        {requests.length > 0 && (
+        <Bell size={24} color="var(--ink-black)" fill={totalCount > 0 ? 'var(--marker-yellow)' : 'none'} />
+        {totalCount > 0 && (
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -81,7 +103,7 @@ export default function Notifications({ user }) {
               fontFamily: 'Nunito, sans-serif',
             }}
           >
-            {requests.length}
+            {totalCount}
           </motion.span>
         )}
       </button>
@@ -96,7 +118,7 @@ export default function Notifications({ user }) {
             transition={{ duration: 0.15 }}
             style={{
               position: 'absolute', top: '40px', right: 0,
-              width: '320px', maxHeight: '400px', overflowY: 'auto',
+              width: '340px', maxHeight: '450px', overflowY: 'auto',
               background: 'var(--paper-white)',
               border: '3px solid var(--ink-black)',
               borderRadius: '12px',
@@ -114,14 +136,66 @@ export default function Notifications({ user }) {
               </span>
             </div>
 
-            {requests.length === 0 ? (
+            {/* Shared Trip Notifications */}
+            {unseenSharedTrips.length > 0 && (
+              <div style={{ padding: '0.5rem' }}>
+                {unseenSharedTrips.map((trip) => (
+                  <div key={trip.id} style={{
+                    display: 'flex', alignItems: 'center', gap: '10px',
+                    padding: '0.75rem', margin: '0.25rem 0',
+                    border: '2px solid var(--ink-black)', borderRadius: '8px',
+                    background: '#eef6ff', boxShadow: '2px 2px 0px var(--ink-black)',
+                  }}>
+                    <div style={{
+                      width: '36px', height: '36px', borderRadius: '50%',
+                      border: '2px solid var(--ink-black)',
+                      background: 'var(--marker-green)', color: 'white',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontWeight: 'bold', fontSize: '1rem', flexShrink: 0,
+                    }}>
+                      <Plane size={18} />
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{
+                        fontWeight: 'bold', fontFamily: 'Nunito, sans-serif',
+                        fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      }}>
+                        ✈️ {trip.destination || 'A trip'}
+                      </div>
+                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontFamily: 'Nunito, sans-serif' }}>
+                        shared by <strong>{trip.creatorName || 'a friend'}</strong>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => dismissSharedTrip(trip.id)}
+                      style={{
+                        width: '28px', height: '28px', borderRadius: '50%',
+                        border: '2px solid var(--ink-black)',
+                        background: 'white', color: 'var(--ink-black)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', boxShadow: '1px 1px 0px var(--ink-black)',
+                        flexShrink: 0,
+                      }}
+                      aria-label="Dismiss"
+                    >
+                      <Check size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Friend Request Notifications */}
+            {requests.length === 0 && unseenSharedTrips.length === 0 ? (
               <div style={{ padding: '2rem', textAlign: 'center' }}>
                 <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>✅</div>
                 <p className="cartoon-font" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', margin: 0 }}>
                   All caught up!
                 </p>
               </div>
-            ) : (
+            ) : requests.length > 0 && (
               <div style={{ padding: '0.5rem' }}>
                 {requests.map((req) => (
                   <div key={req.id} style={{
