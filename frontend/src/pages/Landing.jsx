@@ -105,9 +105,9 @@ export default function Landing({ onLoginSuccess }) {
             lineHeight: '1.6',
             fontFamily: 'JetBrains Mono, monospace'
           }}>
-            > Input budget, dates & constraints.<br/>
-            > Orchestrating Gemini API...<br/>
-            > Outputting perfect day-by-day itinerary.
+            {"> "}Input budget, dates &amp; constraints.<br/>
+            {"> "}Orchestrating Gemini API...<br/>
+            {"> "}Outputting perfect day-by-day itinerary.
           </motion.p>
           
           <motion.div variants={fadeUpVariant}>
