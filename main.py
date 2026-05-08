@@ -1,0 +1,161 @@
+"""Travel Planning & Experience Engine — FastAPI Application.
+
+AI-powered dynamic trip planning with preferences, constraints,
+and real-time weather updates. Built for Google PromptWars hackathon.
+"""
+
+import logging
+from pathlib import Path
+from contextlib import asynccontextmanager
+
+from dotenv import load_dotenv
+
+# Load .env before importing config
+load_dotenv()
+
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+
+from config import settings
+from models import TripRequest, ReplanRequest, HealthResponse
+from services.orchestrator import TripOrchestrator
+from security import RateLimiter, sanitize_input, SecurityHeadersMiddleware
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+# Initialize services
+orchestrator = TripOrchestrator()
+rate_limiter = RateLimiter(max_requests=15, window_seconds=60)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application startup and shutdown handler."""
+    logger.info("Travel Engine starting — LLM provider: %s", settings.llm_provider)
+    settings.validate()
+    yield
+    logger.info("Travel Engine shutting down")
+
+
+app = FastAPI(
+    title="Travel Planning & Experience Engine",
+    description="AI-powered trip planning with real-time weather data",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Security headers
+app.add_middleware(SecurityHeadersMiddleware)
+
+
+# --- API Routes ---
+
+@app.get("/api/health", response_model=HealthResponse, tags=["Health"])
+async def health_check():
+    """Health check endpoint for Cloud Run and monitoring."""
+    return HealthResponse(llm_provider=settings.llm_provider)
+
+
+@app.post("/api/plan", tags=["Planning"])
+async def plan_trip(request: Request, trip: TripRequest):
+    """Generate a dynamic trip itinerary.
+
+    Accepts destination, dates, preferences, and constraints.
+    Returns a weather-aware, day-by-day itinerary powered by AI.
+    """
+    # Rate limiting
+    client_ip = request.client.host if request.client else "unknown"
+    if not rate_limiter.is_allowed(client_ip):
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded. Please wait before trying again.",
+        )
+
+    # Sanitize inputs
+    destination = sanitize_input(trip.destination)
+
+    try:
+        result = await orchestrator.plan_trip(
+            destination=destination,
+            start_date=trip.start_date.isoformat(),
+            end_date=trip.end_date.isoformat(),
+            budget_level=trip.budget_level,
+            preferences=[sanitize_input(p) for p in trip.preferences],
+            traveler_type=trip.traveler_type,
+            constraints=trip.constraints.model_dump(),
+        )
+        return JSONResponse(content=result)
+
+    except ValueError as exc:
+        logger.error("Validation error: %s", exc)
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        logger.error("Planning failed: %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to generate itinerary. Please try again.")
+
+
+@app.post("/api/replan", tags=["Planning"])
+async def replan_trip(request: Request, replan: ReplanRequest):
+    """Dynamically re-plan a trip based on a disruption event.
+
+    Accepts the original trip context and a disruption description,
+    then generates an adapted itinerary.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    if not rate_limiter.is_allowed(client_ip):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded.")
+
+    try:
+        result = await orchestrator.replan_trip(
+            original_destination=sanitize_input(replan.original_destination),
+            start_date=replan.start_date.isoformat(),
+            end_date=replan.end_date.isoformat(),
+            budget_level=replan.budget_level,
+            preferences=[sanitize_input(p) for p in replan.preferences],
+            traveler_type=replan.traveler_type,
+            constraints=replan.constraints.model_dump(),
+            disruption=sanitize_input(replan.disruption),
+            original_summary=sanitize_input(replan.original_itinerary_summary),
+        )
+        return JSONResponse(content=result)
+
+    except Exception as exc:
+        logger.error("Re-planning failed: %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to re-plan. Please try again.")
+
+
+# --- Static file serving (React build) ---
+
+STATIC_DIR = Path(__file__).parent / "static"
+
+if STATIC_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        """Serve React SPA — all non-API routes return index.html."""
+        file_path = STATIC_DIR / full_path
+        if file_path.is_file():
+            return FileResponse(file_path)
+        return FileResponse(STATIC_DIR / "index.html")
+else:
+    @app.get("/")
+    async def root():
+        """Fallback when no static build is present."""
+        return {"message": "Travel Engine API is running. Build frontend with npm run build."}
