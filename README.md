@@ -1,184 +1,305 @@
-# 🌍 Travel Planning & Experience Engine
+<div align="center">
 
-> AI-powered dynamic trip planning with preferences, constraints, and real-time weather updates.  
-> Built for **Google PromptWars Hackathon** — Build with AI.
+```
+████████╗██████╗  █████╗ ██╗   ██╗██╗██╗
+╚══██╔══╝██╔══██╗██╔══██╗██║   ██║██║██║
+   ██║   ██████╔╝███████║██║   ██║██║██║
+   ██║   ██╔══██╗██╔══██║╚██╗ ██╔╝██║╚═╝
+   ██║   ██║  ██║██║  ██║ ╚████╔╝ ██║██╗
+   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝
+```
+
+### ✈️ AI-Powered Travel Planning. Built for Humans.
+
+*Built at **PromptWars: Hyderabad** — Google for Developers × Hack2Skill*
+
+[![Cloud Run](https://img.shields.io/badge/Google_Cloud_Run-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com/run)
+[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
+[![Google Maps](https://img.shields.io/badge/Google_Maps-34A853?style=for-the-badge&logo=google-maps&logoColor=white)](https://developers.google.com/maps)
+[![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+
+</div>
+
+---
+
+## 🌍 What is Travi!?
+
+**Travi!** is a real-time, AI-powered travel planning web app. Tell it where you're going, for how long, and what you're into — it builds you a complete, weather-aware, day-by-day itinerary in seconds. Every activity is pinned on a live Google Map. Plans gone wrong? Hit re-plan and the AI adapts instantly. Travel with friends? Invite them, share plans, get notified in real-time.
+
+---
 
 ## ✨ Features
 
-- **Dynamic Itinerary Generation**: AI creates day-by-day travel plans based on your preferences, budget, and constraints.
-- **Real-Time Weather Integration**: Uses Open-Meteo API to fetch live weather forecasts and adapt activities accordingly (e.g., indoor plans on rainy days).
-- **Smart Re-Planning**: Simulate disruptions (flight delays, closures, weather changes) and watch the AI adapt your itinerary in real-time.
-- **Google Authentication**: Secure sign-in with Firebase Google Auth.
-- **Accessibility**: ARIA labels, keyboard navigation, skip links, screen reader support.
+### 🤖 AI Itinerary Generation
+- Generates a complete **day-by-day travel plan** using Groq (Llama 3.3 70B)
+- Weather-aware: pulls **real-time forecasts** from Open-Meteo and adjusts activities (indoor on rainy days)
+- Respects your **budget level** (budget / moderate / luxury), **traveler type** (solo / couple / family / group), **dietary restrictions**, **accessibility needs**, and **max daily walking distance**
+- Returns **location names, street addresses, and GPS coordinates** for every activity and meal
+
+### 🗺️ Live Google Maps
+- Every day's activities and meals are **pinned on an interactive Google Map**
+- **Blue markers** = activities, **Yellow markers** = meals
+- Click any marker to see name, time, cost, and address in an **info window**
+- Map **auto-fits bounds** to show all locations for that day
+- Map updates live as you navigate between days
+
+### 🃏 Day-by-Day Card Carousel
+- Itinerary renders as a **swipeable card** — one day at a time, no endless scroll
+- Navigate with **◀ ▶ arrow buttons** or **← → keyboard arrow keys**
+- **Dot indicators** for quick-jump to any day
+- Smooth **framer-motion slide transitions** between cards
+
+### 🔄 Real-Time Re-Planning
+- Hit any disruption scenario (heavy rain, closed venue, flight delay, feeling unwell) and the AI **re-generates the affected plan on the spot**
+- Disruption context is woven into the new itinerary's weather notes
+
+### 💾 Save & Revisit Trips
+- **Save any generated itinerary** to your personal trip history with one click
+- View, reload, or delete saved trips from your dashboard
+- All data synced in real-time via **Cloud Firestore**
+
+### 👫 Friend System & Real-Time Notifications
+- **Send friend requests** by email to other Travi! users
+- **Accept or reject** incoming requests via the live notification bell in the navbar
+- Friends list is synced in real-time — no refresh needed
+- Shared trip infrastructure is built and ready (`sharedTrips` Firestore collection)
+
+### 👤 User Profiles & Settings
+- **Update your display name and profile picture** from the Settings modal
+- **Account deletion** with confirmation guard
+- Profile auto-created in Firestore on first sign-in
+
+---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────┐
-│              Google Cloud Run                │
-│  ┌────────────────────────────────────────┐  │
-│  │         FastAPI Backend                │  │
-│  │  POST /api/plan   POST /api/replan    │  │
-│  │         │                │             │  │
-│  │    ┌────▼────────────────▼────┐        │  │
-│  │    │   Trip Orchestrator      │        │  │
-│  │    └────┬───────────┬────────┘        │  │
-│  │    ┌────▼───┐  ┌────▼────────┐        │  │
-│  │    │Weather │  │  LLM Service│        │  │
-│  │    │Open-Met│  │ (Groq/Gemi)│        │  │
-│  │    └────────┘  └─────────────┘        │  │
-│  ├────────────────────────────────────────┤  │
-│  │     React Frontend (Static Build)      │  │
-│  │  Landing │ Dashboard │ Firebase Auth   │  │
-│  └────────────────────────────────────────┘  │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                      Google Cloud Run                            │
+│                                                                  │
+│   ┌──────────────────────────────────────────────────────────┐   │
+│   │                   FastAPI Backend                        │   │
+│   │                                                          │   │
+│   │   GET  /api/health        POST /api/plan                 │   │
+│   │   GET  /api/maps-key      POST /api/replan               │   │
+│   │                                                          │   │
+│   │              ┌─────────────────────┐                     │   │
+│   │              │   TripOrchestrator  │                     │   │
+│   │              └────────┬────────────┘                     │   │
+│   │                       │ runs concurrently                │   │
+│   │          ┌────────────┴──────────────┐                   │   │
+│   │          ▼                           ▼                   │   │
+│   │   ┌─────────────┐          ┌──────────────────┐          │   │
+│   │   │WeatherService│          │   LLM Service    │          │   │
+│   │   │ Open-Meteo   │          │  Groq Llama 3.3  │          │   │
+│   │   │  (free API)  │          │  70B Versatile   │          │   │
+│   │   └──────┬───────┘          └────────┬─────────┘          │   │
+│   │          └──────────┬────────────────┘                   │   │
+│   │                     ▼                                     │   │
+│   │         weather-enriched JSON itinerary                   │   │
+│   │         (with lat/lng for every location)                 │   │
+│   │                                                          │   │
+│   ├──────────────────────────────────────────────────────────┤   │
+│   │              React Frontend (Static Build)               │   │
+│   │                                                          │   │
+│   │  Landing.jsx  →  Dashboard.jsx  →  ItineraryMap.jsx      │   │
+│   │  Login.jsx    →  FriendSystem.jsx → Notifications.jsx    │   │
+│   │  SettingsModal.jsx  ←→  firestoreService.js              │   │
+│   └──────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+           │                    │                    │
+           ▼                    ▼                    ▼
+   ┌───────────────┐   ┌────────────────┐   ┌───────────────────┐
+   │ Firebase Auth │   │ Cloud Firestore │   │  Google Maps API  │
+   │ (Google OAuth)│   │  5 collections │   │  (JS API + Pins)  │
+   └───────────────┘   └────────────────┘   └───────────────────┘
 ```
+
+---
+
+## 🗄️ Firestore Data Model
+
+```
+users/
+  {uid}/
+    displayName, email, photoURL, updatedAt
+
+friendRequests/
+  {id}/
+    fromUid, fromEmail, fromName, fromPhoto
+    toEmail, toUid
+    status: "pending" | "accepted" | "rejected"
+    createdAt
+
+friends/
+  {id}/
+    users: [uid1, uid2]
+    userEmails: [email1, email2]
+    userNames:  [name1, name2]
+    userPhotos: [photo1, photo2]
+    createdAt
+
+savedTrips/
+  {id}/
+    uid, userEmail
+    destination, startDate, endDate
+    budgetLevel, travelerType, preferences
+    itinerary: { full AI response JSON }
+    createdAt
+
+sharedTrips/
+  {id}/
+    createdBy, creatorName
+    members: [uid1, uid2, ...]
+    memberEmails: [...]
+    destination, startDate, endDate
+    itinerary, status, createdAt
+```
+
+---
 
 ## 🛠️ Tech Stack
 
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| Backend | Python + FastAPI | Async API with auto-docs |
-| Frontend | React + Vite | Glassmorphism UI |
-| AI/LLM | Groq / Google Gemini | Itinerary generation |
-| Weather | Open-Meteo API (free) | Real-time forecasts |
-| Auth | Firebase Authentication | Google Sign-in |
-| Database | Cloud Firestore | Session storage |
-| Deployment | Google Cloud Run | Serverless hosting |
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Backend** | Python 3.11 + FastAPI | Async REST API |
+| **Frontend** | React 19 + Vite | UI framework |
+| **AI / LLM** | Groq (Llama 3.3 70B) | Itinerary generation |
+| **Weather** | Open-Meteo API | Real-time forecasts (free, no key) |
+| **Maps** | Google Maps JS API | Interactive location pins |
+| **Auth** | Firebase Authentication | Google Sign-In (OAuth) |
+| **Database** | Cloud Firestore | Real-time data sync |
+| **Analytics** | Firebase Analytics | Usage tracking |
+| **Deployment** | Google Cloud Run | Containerised serverless hosting |
+| **Animations** | Framer Motion | Card carousel, modals, transitions |
+| **Icons** | Lucide React | UI icons |
+| **Styling** | Vanilla CSS | Comic/scrapbook design system |
 
-## 🔒 Google Services Used
+---
 
-1. **Google Cloud Run** — Serverless deployment
-2. **Firebase Authentication** — Google Sign-in
-3. **Cloud Firestore** — Data persistence
-4. **Firebase Analytics** — Usage tracking
-5. **Google Gemini API** — AI itinerary generation (optional, Groq fallback)
+## ☁️ Google Services Used
 
-## 🚀 Setup & Run
+| # | Service | Role |
+|---|---------|------|
+| 1 | **Google Cloud Run** | Hosts the entire app — FastAPI backend + React frontend in one container |
+| 2 | **Firebase Authentication** | Google OAuth Sign-In |
+| 3 | **Cloud Firestore** | Real-time DB for users, friends, saved trips, shared trips |
+| 4 | **Firebase Analytics** | User session and event tracking |
+| 5 | **Google Maps JavaScript API** | Interactive per-day location map with markers and info windows |
 
-### Prerequisites
-- Python 3.11+
-- Node.js 18+
-- Google Cloud account
-
-### Local Development
-
-```bash
-# 1. Install backend dependencies
-pip install -r requirements.txt
-
-# 2. Set environment variables
-cp .env.example .env
-# Edit .env with your API keys
-
-# 3. Run backend
-uvicorn main:app --reload --port 8080
-
-# 4. (Separate terminal) Run frontend
-cd frontend && npm install && npm run dev
-```
-
-### API Examples
-
-```bash
-# Health check
-curl http://localhost:8080/api/health
-
-# Generate itinerary
-curl -X POST http://localhost:8080/api/plan \
-  -H "Content-Type: application/json" \
-  -d '{
-    "destination": "Hyderabad, India",
-    "start_date": "2026-05-15",
-    "end_date": "2026-05-18",
-    "budget_level": "moderate",
-    "preferences": ["street food", "history", "temples"],
-    "traveler_type": "solo",
-    "constraints": {
-      "max_daily_walking_km": 8,
-      "accessibility_needs": false,
-      "dietary_restrictions": "vegetarian"
-    }
-  }'
-
-# Re-plan with disruption
-curl -X POST http://localhost:8080/api/replan \
-  -H "Content-Type: application/json" \
-  -d '{
-    "original_destination": "Hyderabad, India",
-    "start_date": "2026-05-15",
-    "end_date": "2026-05-18",
-    "disruption": "Heavy rain expected on Day 2",
-    "preferences": ["street food", "history"]
-  }'
-```
-
-### Cloud Run Deployment
-
-```bash
-gcloud run deploy travel-engine \
-  --source . \
-  --region asia-south1 \
-  --allow-unauthenticated \
-  --set-env-vars "GROQ_API_KEY=<key>"
-```
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-python -m pytest tests/ -v
-
-# Run specific test file
-python -m pytest tests/test_models.py -v
-```
-
-## 🔐 Security Measures
-
-- **No hardcoded API keys** — Environment variables / Secret Manager
-- **Input sanitization** — XSS prevention, HTML tag stripping
-- **Rate limiting** — 15 requests/minute per IP (sliding window)
-- **Security headers** — CSP, X-Frame-Options, X-Content-Type-Options
-- **Non-root Docker user** — Principle of least privilege
-- **CORS configuration** — Controlled cross-origin access
-
-## ♿ Accessibility Features
-
-- Semantic HTML structure with proper heading hierarchy
-- ARIA labels on all interactive elements
-- Keyboard navigation support
-- Skip-to-content link
-- `aria-live` regions for dynamic content updates
-- `aria-pressed` states on toggle buttons
-- High contrast compatible color scheme
+---
 
 ## 📁 Project Structure
 
 ```
-├── main.py              # FastAPI application entry point
-├── config.py            # Environment-based configuration
-├── models.py            # Pydantic request/response models
-├── security.py          # Input sanitization, rate limiting, CSP
+├── main.py                        # FastAPI app — routes, CORS, static serving
+├── config.py                      # Settings loaded from env vars
+├── models.py                      # Pydantic request/response models
+├── security.py                    # Rate limiting, input sanitisation, CSP headers
+├── requirements.txt               # Python dependencies
+├── Dockerfile                     # Multi-stage build: Node → Python
+│
 ├── services/
-│   ├── llm_service.py   # AI provider (Groq/Gemini) integration
-│   ├── weather_service.py # Open-Meteo weather API
-│   └── orchestrator.py  # Service coordination
-├── tests/
-│   ├── test_models.py   # Model validation tests
-│   ├── test_security.py # Security module tests
-│   └── test_weather.py  # Weather service tests
-├── frontend/            # React + Vite application
+│   ├── orchestrator.py            # Coordinates weather + LLM calls
+│   ├── llm_service.py             # Groq API integration + system prompt
+│   └── weather_service.py         # Open-Meteo geocoding + forecast
+│
+├── frontend/
 │   └── src/
-│       ├── pages/       # Landing, Dashboard
-│       └── components/  # Navbar, Login
-├── Dockerfile           # Multi-stage build (Node + Python)
-└── requirements.txt     # Python dependencies
+│       ├── App.jsx                # Root — auth state, routing, custom cursor
+│       ├── firebase.js            # Firebase init (Auth, Firestore, Analytics)
+│       │
+│       ├── pages/
+│       │   ├── Landing.jsx        # Public landing page
+│       │   └── Dashboard.jsx      # Main trip planning UI + carousel
+│       │
+│       ├── components/
+│       │   ├── ItineraryMap.jsx   # Google Maps component (per-day pins)
+│       │   ├── FriendSystem.jsx   # Send requests, view friends list
+│       │   ├── Notifications.jsx  # Real-time friend request bell
+│       │   ├── Navbar.jsx         # Sticky nav with auth controls
+│       │   ├── Login.jsx          # Google Sign-In button
+│       │   └── SettingsModal.jsx  # Profile update + account deletion
+│       │
+│       └── services/
+│           └── firestoreService.js # All Firestore CRUD + real-time listeners
+│
+└── tests/
+    ├── test_models.py
+    ├── test_security.py
+    └── test_weather.py
 ```
-
-## 👥 Team
-
-Built at **PromptWars: Hyderabad** — Google for Developers x Hack2Skill
 
 ---
 
-*Powered by Google Cloud, Gemini AI, and ☕*
+## 🚀 Local Development
+
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
+
+### Backend
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Set env vars
+cp .env.example .env
+# Fill in: GROQ_API_KEY, GOOGLE_MAPS_API_KEY
+
+# Run
+uvicorn main:app --reload --port 8080
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+# Runs on http://localhost:5173, proxies /api to :8080
+```
+
+---
+
+## ☁️ Cloud Run Deployment
+
+```bash
+gcloud run deploy travi \
+  --source . \
+  --region asia-south1 \
+  --allow-unauthenticated \
+  --set-env-vars "GROQ_API_KEY=<key>,GOOGLE_MAPS_API_KEY=<key>"
+```
+
+The Dockerfile handles everything:
+1. **Stage 1** — Node 20: `npm ci` + `npm run build` → produces `dist/`
+2. **Stage 2** — Python 3.11: installs deps, copies backend, copies `dist/` → `static/`
+3. FastAPI serves React from `/static` and API from `/api`
+
+---
+
+## 🔒 Security
+
+- No hardcoded API keys — all via environment variables
+- Input sanitisation on all user-facing fields (XSS prevention)
+- Rate limiting: 15 requests/minute per IP (sliding window)
+- Security headers: CSP, X-Frame-Options, X-Content-Type-Options
+- Non-root Docker user
+- Google Maps API key served via `/api/maps-key` backend endpoint (not baked into JS bundle)
+
+---
+
+## 🧪 Tests
+
+```bash
+python -m pytest tests/ -v
+```
+
+---
+
+## 👥 Team
+
+Built at **PromptWars: Hyderabad** — Google for Developers × Hack2Skill
+
+*Powered by Google Cloud ☁️ and way too much ☕*
