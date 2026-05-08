@@ -5,8 +5,10 @@ import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import SettingsModal from './components/SettingsModal';
+import FriendSystem from './components/FriendSystem';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { upsertUserProfile } from './services/firestoreService';
 import './index.css';
 
 // Custom Cursor Component
@@ -55,6 +57,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState('dark');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isFriendsOpen, setIsFriendsOpen] = useState(false);
 
   useEffect(() => {
     // Apply theme to document element
@@ -67,9 +70,18 @@ function App() {
 
   useEffect(() => {
     // Listen for Firebase auth state changes
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+
+      // Auto-create/update Firestore user profile on login
+      if (currentUser) {
+        try {
+          await upsertUserProfile(currentUser);
+        } catch (err) {
+          console.error('Failed to upsert user profile:', err);
+        }
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -105,6 +117,7 @@ function App() {
           theme={theme} 
           toggleTheme={toggleTheme} 
           onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenFriends={() => setIsFriendsOpen(true)}
         />
         
         {isSettingsOpen && user && (
@@ -113,6 +126,13 @@ function App() {
             onClose={() => setIsSettingsOpen(false)} 
             onUserUpdated={handleUserUpdated}
             onSignOut={handleSignOut}
+          />
+        )}
+
+        {isFriendsOpen && user && (
+          <FriendSystem 
+            user={user} 
+            onClose={() => setIsFriendsOpen(false)} 
           />
         )}
 
@@ -127,3 +147,4 @@ function App() {
 }
 
 export default App;
+

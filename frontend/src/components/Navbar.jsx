@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Plane } from 'lucide-react';
+import { Plane, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Login from './Login';
+import Notifications from './Notifications';
 
-export default function Navbar({ user, onSignOut, onOpenSettings }) {
+export default function Navbar({ user, onSignOut, onOpenSettings, onOpenFriends }) {
   return (
     <motion.nav 
       initial={{ y: -100, opacity: 0 }}
@@ -41,7 +42,36 @@ export default function Navbar({ user, onSignOut, onOpenSettings }) {
             <span className="cartoon-font" style={{ color: 'var(--text-secondary)', fontSize: '1.5rem' }}>
               Hi, <span style={{ color: 'var(--ink-black)', fontWeight: 'bold' }}>{user.displayName || 'Traveler'}</span>
             </span>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {/* Notification Bell */}
+              <Notifications user={user} />
+
+              {/* Friends Button */}
+              <button 
+                onClick={onOpenFriends}
+                style={{
+                  background: 'var(--marker-blue)',
+                  border: '2px solid var(--ink-black)',
+                  color: 'white',
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontFamily: 'Nunito, sans-serif',
+                  fontWeight: '800',
+                  boxShadow: '3px 3px 0px var(--ink-black)',
+                  transition: 'all 0.1s'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translate(-2px, -2px)'; e.currentTarget.style.boxShadow = '5px 5px 0px var(--ink-black)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translate(0)'; e.currentTarget.style.boxShadow = '3px 3px 0px var(--ink-black)'; }}
+                onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(2px, 2px)'; e.currentTarget.style.boxShadow = '1px 1px 0px var(--ink-black)'; }}
+              >
+                <Users size={16} /> Friends
+              </button>
+
+              {/* Settings Button */}
               <button 
                 onClick={onOpenSettings}
                 style={{
@@ -77,3 +107,4 @@ export default function Navbar({ user, onSignOut, onOpenSettings }) {
     </motion.nav>
   );
 }
+
