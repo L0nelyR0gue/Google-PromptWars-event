@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Bookmark, Trash2, Eye } from 'lucide-react';
 import { saveTrip, subscribeToSavedTrips, deleteSavedTrip } from '../services/firestoreService';
 import ItineraryMap from '../components/ItineraryMap';
+import TripChatbot from '../components/TripChatbot';
 
 const PREFERENCE_OPTIONS = [
   { id: 'street-food', label: '🍜 Street Food', value: 'street food' },
@@ -743,6 +744,12 @@ export default function Dashboard({ user }) {
                   </div>
                   {replanLoading && <p className="cartoon-font" style={{ color: 'var(--marker-yellow)', marginTop: '1rem', fontSize: '1.2rem' }}>🔄 Re-planning...</p>}
                 </div>
+
+                {/* AI Travel Agent Chat */}
+                <TripChatbot
+                  itinerary={itinerary}
+                  destination={itinerary.destination || destination}
+                />
               </div>
             )}
           </section>

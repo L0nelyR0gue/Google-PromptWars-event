@@ -4,6 +4,7 @@ AI-powered dynamic trip planning with preferences, constraints,
 and real-time weather updates. Built for Google PromptWars hackathon.
 """
 
+import json
 import logging
 from pathlib import Path
 from contextlib import asynccontextmanager
@@ -152,6 +153,92 @@ async def replan_trip(request: Request, replan: ReplanRequest):
         logger.error("Re-planning failed: %s", exc, exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to re-plan. Please try again.")
 
+
+@app.post("/api/chat", tags=["Chat"])
+async def chat_with_trip(request: Request, body: dict):
+    """Chat with the AI travel agent about the current itinerary.
+
+    Accepts the full itinerary context and a user message.
+    Returns a conversational response grounded in the trip data.
+    """
+    import httpx as _httpx
+
+    user_message = sanitize_input(body.get("message", ""))
+    itinerary_json = body.get("itinerary", {})
+    destination = sanitize_input(body.get("destination", ""))
+    conversation_history = body.get("history", [])
+
+    if not user_message:
+        raise HTTPException(status_code=400, detail="Message is required.")
+
+    # Build context from itinerary
+    context = f"DESTINATION: {destination}\n"
+    context += f"ITINERARY DATA:\n{json.dumps(itinerary_json, indent=2, default=str)[:6000]}\n"
+
+    system_prompt = f"""You are Travi, a friendly and knowledgeable AI travel assistant.
+You have access to the traveler's COMPLETE itinerary data below. Use it to answer questions.
+
+{context}
+
+RULES:
+1. Answer ONLY based on the itinerary data provided above. Don't make up information.
+2. Be conversational, warm, and helpful — like a travel buddy.
+3. Keep answers concise (2-4 sentences) unless the user asks for detail.
+4. Use emojis sparingly to keep the comic/fun theme.
+5. If asked about something not in the itinerary, say so honestly and suggest what IS available.
+6. You can help with: budget breakdowns, day summaries, activity details, meal suggestions, packing tips, local tips, and comparisons between days.
+"""
+
+    messages = [{"role": "system", "content": system_prompt}]
+
+    # Add conversation history (last 10 messages to stay within context)
+    for msg in conversation_history[-10:]:
+        messages.append({
+            "role": msg.get("role", "user"),
+            "content": sanitize_input(msg.get("content", "")),
+        })
+
+    messages.append({"role": "user", "content": user_message})
+
+    # Call Groq
+    provider = settings.llm_provider
+    if provider == "groq":
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {settings.groq_api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": "llama-3.3-70b-versatile",
+            "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": 500,
+        }
+    elif provider == "gemini":
+        url = f"https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {settings.gemini_api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": "gemini-2.0-flash",
+            "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": 500,
+        }
+    else:
+        raise HTTPException(status_code=500, detail="No LLM provider configured.")
+
+    try:
+        async with _httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(url, headers=headers, json=payload)
+            resp.raise_for_status()
+            data = resp.json()
+            reply = data["choices"][0]["message"]["content"]
+            return {"reply": reply}
+    except Exception as exc:
+        logger.error("Chat failed: %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail="Chat failed. Please try again.")
 
 # --- Static file serving (React build) ---
 
