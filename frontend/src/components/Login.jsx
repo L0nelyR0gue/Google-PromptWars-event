@@ -26,46 +26,40 @@ export default function Login({ onLoginSuccess }) {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '12px',
-        background: 'var(--navbar-bg)',
-        color: 'var(--text-primary)',
-        fontFamily: 'Inter, sans-serif',
-        fontSize: '1rem',
-        fontWeight: '600',
+        background: '#ffffff',
+        color: 'var(--ink-black)',
+        fontFamily: 'Nunito, sans-serif',
+        fontSize: '1.2rem',
+        fontWeight: '800',
         padding: '16px 32px',
-        borderRadius: '50px',
-        border: '1px solid var(--glass-border)',
+        borderRadius: '12px',
+        border: '3px solid var(--ink-black)',
         cursor: 'pointer',
-        boxShadow: '0 8px 32px rgba(66, 133, 244, 0.15)',
-        transition: 'all 0.3s ease',
-        position: 'relative',
-        overflow: 'hidden'
+        boxShadow: '6px 6px 0px var(--ink-black)',
+        transition: 'all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1)',
+        position: 'relative'
       }}
       onMouseOver={(e) => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 12px 40px rgba(66, 133, 244, 0.3)';
-        e.currentTarget.style.borderColor = 'var(--google-blue)';
+        e.currentTarget.style.transform = 'translate(-2px, -2px)';
+        e.currentTarget.style.boxShadow = '8px 8px 0px var(--ink-black)';
+        e.currentTarget.style.background = '#fafafa';
       }}
       onMouseOut={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '0 8px 32px rgba(66, 133, 244, 0.15)';
-        e.currentTarget.style.borderColor = 'var(--glass-border)';
+        e.currentTarget.style.transform = 'translate(0)';
+        e.currentTarget.style.boxShadow = '6px 6px 0px var(--ink-black)';
+        e.currentTarget.style.background = '#ffffff';
+      }}
+      onMouseDown={(e) => {
+        e.currentTarget.style.transform = 'translate(4px, 4px)';
+        e.currentTarget.style.boxShadow = '2px 2px 0px var(--ink-black)';
       }}
     >
-      {/* Subtle background glow effect on the button itself */}
-      <div style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        background: 'var(--google-gradient)',
-        opacity: 0.1,
-        zIndex: 0
-      }}></div>
-      
       <img 
         src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
         alt="Google Logo" 
-        style={{ width: '24px', height: '24px', position: 'relative', zIndex: 1 }} 
+        style={{ width: '28px', height: '28px' }} 
       />
-      <span style={{ position: 'relative', zIndex: 1 }}>Authenticate via Google</span>
+      <span>Authenticate via Google</span>
     </button>
   );
 }

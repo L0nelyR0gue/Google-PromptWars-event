@@ -1,33 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-  /* Google Brand Colors */
-  --google-blue: #4285F4;
-  --google-red: #EA4335;
-  --google-yellow: #FBBC05;
-  --google-green: #34A853;
+  /* Doodle Brand Colors */
+  --ink-black: #1a1a1a;
+  --paper-white: #faf9f6; /* Warm off-white/cream */
+  --marker-blue: #4A90E2;
+  --marker-red: #FF5A5F;
+  --marker-yellow: #FFD166;
+  --marker-green: #06D6A0;
 
-  /* Default to Dark Mode (Ethereal Glass + Cyberpunk) */
-  --bg-color: #050505;
-  --bg-color-secondary: rgba(15, 15, 15, 0.6);
-  --text-primary: #ffffff;
-  --text-secondary: #888888;
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.02);
-  --navbar-bg: rgba(5, 5, 5, 0.7);
-  
-  --google-gradient: linear-gradient(135deg, var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green));
+  /* Global Vars */
+  --bg-color: var(--paper-white);
+  --text-primary: var(--ink-black);
+  --text-secondary: #555555;
+  --border-thick: 3px solid var(--ink-black);
+  --shadow-solid: 6px 6px 0px var(--ink-black);
+  --shadow-hover: 10px 10px 0px var(--ink-black);
 }
 
-[data-theme='light'] {
-  --bg-color: #ffffff;
-  --bg-color-secondary: rgba(245, 245, 245, 0.6);
-  --text-primary: #111111;
-  --text-secondary: #666666;
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-bg: rgba(0, 0, 0, 0.02);
-  --navbar-bg: rgba(255, 255, 255, 0.7);
-}
+/* Remove data-theme logic since we are purely a sketchbook theme now */
 
 * {
   box-sizing: border-box;
@@ -36,36 +27,28 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Nunito', sans-serif;
   background-color: var(--bg-color);
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  letter-spacing: -0.02em;
-}
-
-/* Ambient Google Glow */
+/* Dotted Journal Background */
 .ambient-glow {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: -1;
-  background: 
-    radial-gradient(circle at 15% 30%, rgba(66, 133, 244, 0.08) 0%, transparent 40%), /* Blue */
-    radial-gradient(circle at 85% 20%, rgba(234, 67, 53, 0.08) 0%, transparent 40%), /* Red */
-    radial-gradient(circle at 20% 80%, rgba(251, 188, 5, 0.08) 0%, transparent 40%), /* Yellow */
-    radial-gradient(circle at 80% 85%, rgba(52, 168, 83, 0.08) 0%, transparent 40%); /* Green */
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none; z-index: -1;
+  background-image: radial-gradient(#d5d5d5 1.5px, transparent 1.5px);
+  background-size: 30px 30px;
+  opacity: 0.8;
+}
+
+h1, h2, h3, h4, h5, h6, .cartoon-font {
+  font-family: 'Caveat', cursive;
+  letter-spacing: 0.02em;
 }
 
 .app-container {
@@ -75,23 +58,33 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
-/* Glassmorphism utility -> Sleek Ethereal Box */
-.glass-panel {
-  background: var(--bg-color-secondary);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
+/* Comic Book / Scrapbook Box Utility */
+.comic-box {
+  background: #ffffff;
+  border: var(--border-thick);
+  border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-solid);
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+.comic-box:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: var(--shadow-hover);
 }
+
+.comic-box-blue { border-color: var(--marker-blue); box-shadow: 6px 6px 0px var(--marker-blue); }
+.comic-box-blue:hover { box-shadow: 10px 10px 0px var(--marker-blue); }
+
+.comic-box-yellow { border-color: var(--marker-yellow); box-shadow: 6px 6px 0px var(--marker-yellow); }
+.comic-box-yellow:hover { box-shadow: 10px 10px 0px var(--marker-yellow); }
+
+.comic-box-green { border-color: var(--marker-green); box-shadow: 6px 6px 0px var(--marker-green); }
+.comic-box-green:hover { box-shadow: 10px 10px 0px var(--marker-green); }
 
 /* Hero Section */
 .hero {

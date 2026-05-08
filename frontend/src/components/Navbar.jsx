@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
+import { Plane } from 'lucide-react';
 
-export default function Navbar({ user, onSignOut, theme, toggleTheme }) {
+export default function Navbar({ user, onSignOut }) {
   return (
     <nav style={{
       position: 'sticky',
@@ -12,53 +12,50 @@ export default function Navbar({ user, onSignOut, theme, toggleTheme }) {
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: '0.8rem 1.5rem',
-      background: 'var(--navbar-bg)',
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
-      border: '1px solid var(--glass-border)',
-      borderRadius: '50px',
-      boxShadow: '0 4px 24px rgba(0,0,0,0.1)',
+      background: 'var(--paper-white)',
+      border: 'var(--border-thick)',
+      borderRadius: '8px',
+      boxShadow: 'var(--shadow-solid)',
       marginBottom: '2rem'
     }}>
       <Link to="/" style={{ textDecoration: 'none' }}>
-        <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '1.4rem', fontWeight: '800', letterSpacing: '-0.5px', display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-primary)', cursor: 'grab' }}
+        <div className="cartoon-font" style={{ fontSize: '2rem', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-black)', cursor: 'grab', transform: 'rotate(-2deg)' }}
              onMouseDown={(e) => e.currentTarget.style.cursor = 'grabbing'}
              onMouseUp={(e) => e.currentTarget.style.cursor = 'grab'}>
-          Travi<span style={{ background: 'var(--google-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>!</span>
+          <Plane size={28} color="var(--marker-blue)" fill="var(--marker-blue)" style={{ transform: 'rotate(45deg)' }} />
+          Travi!
         </div>
       </Link>
       
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        <button onClick={toggleTheme} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', opacity: 0.7 }}>
-          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ color: 'var(--text-secondary)', fontWeight: '400', fontSize: '0.9rem' }}>
-              Welcome, <span style={{ color: 'var(--text-primary)', fontWeight: '600'}}>{user.displayName}</span>
+            <span className="cartoon-font" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>
+              Hi, <span style={{ color: 'var(--ink-black)'}}>{user.displayName}</span>
             </span>
             <button 
               onClick={onSignOut}
               style={{
-                background: 'rgba(234, 67, 53, 0.1)',
-                border: '1px solid var(--google-red)',
-                color: 'var(--google-red)',
+                background: 'var(--marker-red)',
+                border: '2px solid var(--ink-black)',
+                color: 'var(--ink-black)',
                 padding: '0.4rem 1rem',
-                borderRadius: '50px',
+                borderRadius: '8px',
                 cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                transition: 'all 0.2s'
+                fontFamily: 'Nunito, sans-serif',
+                fontWeight: '800',
+                boxShadow: '3px 3px 0px var(--ink-black)',
+                transition: 'all 0.1s'
               }}
-              onMouseOver={(e) => { e.currentTarget.style.background = 'var(--google-red)'; e.currentTarget.style.color = 'white'; }}
-              onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(234, 67, 53, 0.1)'; e.currentTarget.style.color = 'var(--google-red)'; }}
+              onMouseOver={(e) => { e.currentTarget.style.transform = 'translate(-2px, -2px)'; e.currentTarget.style.boxShadow = '5px 5px 0px var(--ink-black)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.transform = 'translate(0)'; e.currentTarget.style.boxShadow = '3px 3px 0px var(--ink-black)'; }}
+              onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(2px, 2px)'; e.currentTarget.style.boxShadow = '1px 1px 0px var(--ink-black)'; }}
             >
               Sign Out
             </button>
           </div>
         ) : (
-          <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: '500', fontFamily: 'JetBrains Mono, monospace' }}>v1.0.0-beta</span>
+          <span className="cartoon-font" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', transform: 'rotate(2deg)' }}>Your Fun Planner!</span>
         )}
       </div>
     </nav>
