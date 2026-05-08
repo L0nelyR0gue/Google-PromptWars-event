@@ -1,19 +1,21 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
-// TODO: Replace with your actual Firebase config from the Firebase Console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAFFeWHk2utN48at8YgMks6Ffv4C-WjTlM",
+  authDomain: "travi-cd6fa.firebaseapp.com",
+  projectId: "travi-cd6fa",
+  storageBucket: "travi-cd6fa.firebasestorage.app",
+  messagingSenderId: "250617724054",
+  appId: "1:250617724054:web:53cc49a06ea9e3bc49d6b7",
+  measurementId: "G-SPK0S508E2"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase (check if already initialized for HMR)
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+export const analytics = getAnalytics(app);
 
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);

@@ -5,18 +5,16 @@ import { auth, googleProvider } from './firebase';
 export default function Login({ onLoginSuccess }) {
   const handleGoogleSignIn = async () => {
     try {
-      // Uncomment the below lines when Firebase config is ready
-      // const result = await signInWithPopup(auth, googleProvider);
-      // const user = result.user;
-      // console.log("User signed in:", user);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      console.log("User signed in:", user);
       
-      // Mock login for now so you can test the UI flow
-      console.log("Mock Google Sign-In Triggered. Ensure firebase.js has real credentials to work.");
       if (onLoginSuccess) {
-        onLoginSuccess({ displayName: "Demo User", email: "demo@example.com" });
+        onLoginSuccess(user);
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
+      alert("Sign-in failed. Please ensure Firebase is correctly configured.");
     }
   };
 
