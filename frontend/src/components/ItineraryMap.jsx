@@ -309,7 +309,7 @@ export default function ItineraryMap({ day, mapsApiKey, destination }) {
           <Map
             defaultCenter={defaultCenter}
             defaultZoom={13}
-            mapId="travi-itinerary-map"
+            mapId="DEMO_MAP_ID"
             gestureHandling="cooperative"
             disableDefaultUI={false}
             style={{ width: '100%', height: '100%' }}
