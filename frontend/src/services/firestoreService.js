@@ -6,6 +6,7 @@
  *   friendRequests/{id}   — pending/accepted/rejected friend requests
  *   friends/{id}          — accepted friendships (bidirectional)
  *   sharedTrips/{id}      — collaboratively planned trips
+ *   savedTrips/{id}       — user's saved itineraries
  */
 
 import {
@@ -237,4 +238,55 @@ export async function updateSharedTripItinerary(tripId, newItinerary) {
     itinerary: newItinerary,
     updatedAt: serverTimestamp(),
   });
+}
+
+// ──────────────────────────────────────────────
+// 5. SAVED TRIPS (Personal History)
+// ──────────────────────────────────────────────
+
+/**
+ * Save a generated itinerary to the user's personal trip history.
+ */
+export async function saveTrip(user, tripConfig, itineraryData) {
+  const docRef = await addDoc(collection(db, 'savedTrips'), {
+    uid: user.uid,
+    userEmail: user.email.toLowerCase(),
+    destination: tripConfig.destination || itineraryData.destination || '',
+    startDate: tripConfig.startDate || '',
+    endDate: tripConfig.endDate || '',
+    budgetLevel: tripConfig.budgetLevel || 'moderate',
+    travelerType: tripConfig.travelerType || 'solo',
+    preferences: tripConfig.preferences || [],
+    itinerary: itineraryData,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+/**
+ * Subscribe to the current user's saved trips (real-time).
+ * Returns an unsubscribe function.
+ */
+export function subscribeToSavedTrips(userUid, callback) {
+  const q = query(
+    collection(db, 'savedTrips'),
+    where('uid', '==', userUid),
+  );
+  return onSnapshot(q, (snap) => {
+    const trips = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Sort by createdAt descending (newest first)
+    trips.sort((a, b) => {
+      const aTime = a.createdAt?.seconds || 0;
+      const bTime = b.createdAt?.seconds || 0;
+      return bTime - aTime;
+    });
+    callback(trips);
+  });
+}
+
+/**
+ * Delete a saved trip from the user's history.
+ */
+export async function deleteSavedTrip(tripId) {
+  await deleteDoc(doc(db, 'savedTrips', tripId));
 }

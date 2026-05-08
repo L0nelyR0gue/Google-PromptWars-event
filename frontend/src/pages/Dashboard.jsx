@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bookmark, Trash2, Eye } from 'lucide-react';
+import { saveTrip, subscribeToSavedTrips, deleteSavedTrip } from '../services/firestoreService';
 
 const PREFERENCE_OPTIONS = [
   { id: 'street-food', label: '🍜 Street Food', value: 'street food' },
@@ -43,6 +44,16 @@ export default function Dashboard({ user }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [replanLoading, setReplanLoading] = useState(false);
+  const [savedTrips, setSavedTrips] = useState([]);
+  const [saveStatus, setSaveStatus] = useState(''); // '' | 'saving' | 'saved'
+  const [viewingSavedTrip, setViewingSavedTrip] = useState(null);
+
+  // Subscribe to saved trips
+  useEffect(() => {
+    if (!user?.uid) return;
+    const unsub = subscribeToSavedTrips(user.uid, setSavedTrips);
+    return () => unsub();
+  }, [user?.uid]);
 
   if (!user) return <Navigate to="/" replace />;
 
@@ -415,18 +426,52 @@ export default function Dashboard({ user }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {/* Summary */}
                 <div className="comic-box" style={{ padding: '1.5rem', background: 'var(--paper-white)' }}>
-                  <h2 className="cartoon-font" style={{ margin: '0 0 0.5rem 0', fontSize: '2rem', color: 'var(--ink-black)' }}>
-                    📍 {itinerary.destination || destination}
-                  </h2>
-                  <p style={{ color: 'var(--text-secondary)', margin: '0 0 0.75rem 0', fontSize: '1.1rem', fontWeight: 'bold' }}>{itinerary.summary}</p>
-                  {itinerary.weather_overview && (
-                    <p className="cartoon-font" style={{ color: 'var(--marker-blue)', fontSize: '1.5rem', margin: 0 }}>🌤️ {itinerary.weather_overview}</p>
-                  )}
-                  {itinerary.total_estimated_cost_usd && (
-                    <p className="cartoon-font" style={{ color: 'var(--marker-green)', fontSize: '1.5rem', margin: '0.5rem 0 0 0', fontWeight: 'bold' }}>
-                      💰 Estimated total: ${itinerary.total_estimated_cost_usd}
-                    </p>
-                  )}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+                    <div style={{ flex: 1 }}>
+                      <h2 className="cartoon-font" style={{ margin: '0 0 0.5rem 0', fontSize: '2rem', color: 'var(--ink-black)' }}>
+                        📍 {itinerary.destination || destination}
+                      </h2>
+                      <p style={{ color: 'var(--text-secondary)', margin: '0 0 0.75rem 0', fontSize: '1.1rem', fontWeight: 'bold' }}>{itinerary.summary}</p>
+                      {itinerary.weather_overview && (
+                        <p className="cartoon-font" style={{ color: 'var(--marker-blue)', fontSize: '1.5rem', margin: 0 }}>🌤️ {itinerary.weather_overview}</p>
+                      )}
+                      {itinerary.total_estimated_cost_usd && (
+                        <p className="cartoon-font" style={{ color: 'var(--marker-green)', fontSize: '1.5rem', margin: '0.5rem 0 0 0', fontWeight: 'bold' }}>
+                          💰 Estimated total: ${itinerary.total_estimated_cost_usd}
+                        </p>
+                      )}
+                    </div>
+                    {/* Save Trip Button */}
+                    <button
+                      onClick={async () => {
+                        setSaveStatus('saving');
+                        try {
+                          await saveTrip(user, { destination, startDate, endDate, budgetLevel, travelerType, preferences: selectedPrefs }, itinerary);
+                          setSaveStatus('saved');
+                          setTimeout(() => setSaveStatus(''), 3000);
+                        } catch (err) {
+                          console.error('Save failed:', err);
+                          setSaveStatus('');
+                        }
+                      }}
+                      disabled={saveStatus === 'saving'}
+                      style={{
+                        padding: '0.6rem 1rem', borderRadius: '8px',
+                        border: '2px solid var(--ink-black)',
+                        background: saveStatus === 'saved' ? 'var(--marker-green)' : 'var(--marker-yellow)',
+                        color: saveStatus === 'saved' ? 'white' : 'var(--ink-black)',
+                        fontFamily: 'Nunito, sans-serif', fontWeight: 'bold', fontSize: '1rem',
+                        cursor: saveStatus === 'saving' ? 'wait' : 'pointer',
+                        boxShadow: '3px 3px 0px var(--ink-black)',
+                        display: 'flex', alignItems: 'center', gap: '6px',
+                        whiteSpace: 'nowrap', flexShrink: 0,
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      <Bookmark size={18} fill={saveStatus === 'saved' ? 'white' : 'none'} />
+                      {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved!' : 'Save Trip'}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Day Cards */}
@@ -557,6 +602,87 @@ export default function Dashboard({ user }) {
           </section>
         </div>
       </div>
+
+      {/* My Saved Trips Section */}
+      {savedTrips.length > 0 && (
+        <div className="comic-box" style={{ padding: '2rem', background: 'var(--paper-white)', marginBottom: '2rem' }}>
+          <h2 className="cartoon-font" style={{ margin: '0 0 1.5rem 0', fontSize: '2.5rem', color: 'var(--ink-black)' }}>
+            📚 My Saved Trips
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            {savedTrips.map((trip) => (
+              <div key={trip.id} style={{
+                border: '2px solid var(--ink-black)', borderRadius: '8px',
+                padding: '1.25rem', background: 'white',
+                boxShadow: '4px 4px 0px var(--ink-black)',
+                display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                transition: 'transform 0.1s',
+              }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translate(-2px, -2px)'; e.currentTarget.style.boxShadow = '6px 6px 0px var(--ink-black)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translate(0)'; e.currentTarget.style.boxShadow = '4px 4px 0px var(--ink-black)'; }}
+              >
+                <h3 className="cartoon-font" style={{ margin: 0, fontSize: '1.6rem', color: 'var(--marker-blue)' }}>
+                  📍 {trip.destination || 'Unknown'}
+                </h3>
+                <p style={{ margin: 0, fontFamily: 'Nunito, sans-serif', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                  {trip.startDate} → {trip.endDate}
+                </p>
+                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                  <span style={{
+                    padding: '2px 8px', borderRadius: '6px', fontSize: '0.8rem',
+                    background: 'var(--marker-yellow)', border: '1.5px solid var(--ink-black)',
+                    fontFamily: 'Nunito, sans-serif', fontWeight: 'bold',
+                  }}>{trip.budgetLevel || 'moderate'}</span>
+                  <span style={{
+                    padding: '2px 8px', borderRadius: '6px', fontSize: '0.8rem',
+                    background: 'var(--marker-blue)', color: 'white', border: '1.5px solid var(--ink-black)',
+                    fontFamily: 'Nunito, sans-serif', fontWeight: 'bold',
+                  }}>{trip.travelerType || 'solo'}</span>
+                </div>
+                {trip.itinerary?.summary && (
+                  <p style={{ margin: 0, fontFamily: 'Nunito, sans-serif', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                    {trip.itinerary.summary.substring(0, 100)}...
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', paddingTop: '0.5rem' }}>
+                  <button onClick={() => {
+                    setItinerary(trip.itinerary);
+                    setDestination(trip.destination || '');
+                    setStartDate(trip.startDate || '');
+                    setEndDate(trip.endDate || '');
+                    setBudgetLevel(trip.budgetLevel || 'moderate');
+                    setTravelerType(trip.travelerType || 'solo');
+                    setSelectedPrefs(trip.preferences || []);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }} style={{
+                    flex: 1, padding: '0.5rem', borderRadius: '6px',
+                    border: '2px solid var(--ink-black)',
+                    background: 'var(--marker-green)', color: 'white',
+                    fontFamily: 'Nunito, sans-serif', fontWeight: 'bold', fontSize: '0.9rem',
+                    cursor: 'pointer', boxShadow: '2px 2px 0px var(--ink-black)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                  }}>
+                    <Eye size={16} /> View
+                  </button>
+                  <button onClick={async () => {
+                    if (window.confirm('Delete this saved trip?')) {
+                      await deleteSavedTrip(trip.id);
+                    }
+                  }} style={{
+                    padding: '0.5rem 0.75rem', borderRadius: '6px',
+                    border: '2px solid var(--ink-black)',
+                    background: 'var(--marker-red)', color: 'white',
+                    cursor: 'pointer', boxShadow: '2px 2px 0px var(--ink-black)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
