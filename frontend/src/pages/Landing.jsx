@@ -97,7 +97,7 @@ export default function Landing({ onLoginSuccess }) {
     { name: "React", icon: <Braces size={32} color="var(--marker-blue)" /> },
     { name: "Firebase", icon: <Database size={32} color="var(--marker-yellow)" /> },
     { name: "Vite", icon: <Zap size={32} color="var(--marker-blue)" /> },
-    { name: "Gemini AI", icon: <Sparkles size={32} color="var(--marker-red)" /> }
+    { name: "Llama 3", icon: <Sparkles size={32} color="var(--marker-red)" /> }
   ];
 
   return (
@@ -242,7 +242,7 @@ export default function Landing({ onLoginSuccess }) {
             }}
           >
             <Sparkles size={18} fill="var(--ink-black)"/>
-            Magic by Gemini
+            Magic by Llama 3
           </motion.div>
 
           {/* Animated Arrows Pointing to Logo - Perfectly Anchored to the Text */}
@@ -432,7 +432,7 @@ export default function Landing({ onLoginSuccess }) {
               <Zap size={48} fill="var(--marker-yellow)" color="var(--ink-black)" style={{ marginBottom: '1rem' }} />
               <h3 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Smart AI Magic</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', lineHeight: '1.5', fontWeight: '800' }}>
-                Gemini reads your crazy constraints (vegan, $50 budget) and makes it work effortlessly!
+                Llama 3 reads your crazy constraints (vegan, $50 budget) and makes it work effortlessly!
               </p>
             </div>
 
