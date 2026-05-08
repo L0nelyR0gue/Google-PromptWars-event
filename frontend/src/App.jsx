@@ -1,71 +1,61 @@
-import React, { useState } from 'react';
-import Login from './Login';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Landing from './pages/Landing';
+import Dashboard from './pages/Dashboard';
+import { auth } from './firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import './index.css';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Listen for Firebase auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>Loading...</div>;
+  }
 
   return (
-    <div className="app-container">
-      <nav className="nav-bar">
-        <div className="logo">Prompt<span>Wars</span></div>
-        <div className="nav-links">
-          {user ? (
-            <span style={{ color: '#a0a0a0', fontWeight: '300' }}>
-              Welcome, <span style={{ color: '#fff', fontWeight: '600'}}>{user.displayName}</span>
-            </span>
-          ) : (
-            <span style={{ color: '#a0a0a0', fontSize: '0.9rem' }}>Travel Engine</span>
-          )}
-        </div>
-      </nav>
-
-      {!user ? (
-        <main>
-          <section className="hero">
-            <h1>Intelligent Travel Engine</h1>
-            <p>Plan trips dynamically with personalized preferences, real-world constraints, and real-time updates powered by Gemini 2.0.</p>
-            <Login onLoginSuccess={setUser} />
-          </section>
-
-          <section className="features-grid">
-            <div className="glass-panel feature-card">
-              <div className="feature-icon">🎯</div>
-              <h3>Smart Planning</h3>
-              <p>Input your budget, interests, and constraints. Our Gemini-powered engine crafts the perfect day-by-day itinerary.</p>
-            </div>
-            <div className="glass-panel feature-card">
-              <div className="feature-icon">⚡</div>
-              <h3>Real-Time Adjustments</h3>
-              <p>Flight delayed? Museum closed? The engine automatically replans your trip based on live data and local events.</p>
-            </div>
-            <div className="glass-panel feature-card">
-              <div className="feature-icon">☁️</div>
-              <h3>Cloud Native</h3>
-              <p>Built securely on Google Cloud. Your data is synced in real-time across all your devices using Firestore.</p>
-            </div>
-          </section>
-        </main>
-      ) : (
-        <main style={{ marginTop: '3rem', animation: 'fadeIn 0.5s ease-out' }}>
-          <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center' }}>
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Welcome to the Dashboard</h2>
-            <p style={{ color: '#a0a0a0', marginBottom: '2rem' }}>
-              Authentication successful! This is where the core travel planner UI goes.
-              <br/>
-              Your teammate can now hook up the real Firebase config and backend APIs.
-            </p>
-            <button 
-              className="google-btn" 
-              style={{ background: 'var(--accent-google-red)', color: 'white' }}
-              onClick={() => setUser(null)}
-            >
-              Sign Out
-            </button>
-          </div>
-        </main>
-      )}
-    </div>
+    <Router>
+      <div className="app-container">
+        <Navbar user={user} onSignOut={handleSignOut} />
+        
+        <Routes>
+          {/* If user is logged in, redirect root to dashboard. Otherwise show landing */}
+          <Route 
+            path="/" 
+            element={user ? <Navigate to="/dashboard" replace /> : <Landing onLoginSuccess={setUser} />} 
+          />
+          
+          {/* Dashboard Route (Protected inside the component) */}
+          <Route 
+            path="/dashboard" 
+            element={<Dashboard user={user} />} 
+          />
+          
+          {/* Fallback route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
