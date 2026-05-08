@@ -26,12 +26,13 @@ export default function Navbar({ user, onSignOut }) {
       }}
     >
       <Link to="/" style={{ textDecoration: 'none' }}>
-        <div className="cartoon-font" style={{ fontSize: '2rem', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-black)', cursor: 'grab' }}>
+        <div className="cartoon-font" style={{ fontSize: '2.5rem', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--ink-black)', cursor: 'grab' }}>
           <motion.div
-            animate={{ y: [0, -5, 0], rotate: [45, 40, 50, 45] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            animate={{ x: [0, 30, 0], y: [0, -5, 0], rotate: [45, 60, 45] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+            style={{ display: 'flex', alignItems: 'center' }}
           >
-            <Plane size={28} color="var(--marker-blue)" fill="var(--marker-blue)" style={{ transform: 'rotate(45deg)' }} />
+            <Plane size={32} color="var(--marker-blue)" fill="var(--marker-blue)" />
           </motion.div>
           Travi!
         </div>

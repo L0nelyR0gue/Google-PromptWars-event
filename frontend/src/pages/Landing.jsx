@@ -222,35 +222,6 @@ export default function Landing({ onLoginSuccess }) {
           zIndex: 10
         }}>
           
-          {/* Animated Arrows Pointing to Logo */}
-          <div className="wiggle" style={{ position: 'absolute', top: '15%', left: '10%', transform: 'rotate(20deg)' }}>
-            <svg width="100" height="100" viewBox="0 0 100 100">
-              <path d="M 10 10 Q 50 20, 80 80" fill="transparent" stroke="var(--marker-red)" strokeWidth="4" strokeLinecap="round" />
-              <polygon points="75,70 80,80 70,80" fill="var(--marker-red)" />
-            </svg>
-          </div>
-
-          <div className="pulse" style={{ position: 'absolute', top: '10%', right: '15%', transform: 'rotate(-40deg)' }}>
-            <svg width="80" height="80" viewBox="0 0 100 100">
-              <path d="M 90 10 Q 50 40, 20 80" fill="transparent" stroke="var(--marker-green)" strokeWidth="4" strokeLinecap="round" strokeDasharray="5 5" />
-              <polygon points="25,70 20,80 30,80" fill="var(--marker-green)" />
-            </svg>
-          </div>
-
-          <div className="drift" style={{ position: 'absolute', top: '70%', left: '15%', transform: 'rotate(-15deg)' }}>
-            <svg width="120" height="80" viewBox="0 0 120 80">
-              <path d="M 10 70 Q 60 60, 110 10" fill="transparent" stroke="var(--marker-blue)" strokeWidth="5" strokeLinecap="round" />
-              <polygon points="100,15 110,10 105,25" fill="var(--marker-blue)" />
-            </svg>
-          </div>
-
-          <div className="wiggle" style={{ position: 'absolute', top: '65%', right: '10%', transform: 'rotate(10deg)' }}>
-            <svg width="90" height="90" viewBox="0 0 100 100">
-              <path d="M 90 90 Q 50 60, 10 10" fill="transparent" stroke="var(--marker-yellow)" strokeWidth="4" strokeLinecap="round" />
-              <polygon points="20,15 10,10 15,20" fill="var(--marker-yellow)" />
-            </svg>
-          </div>
-
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9 }}
@@ -273,18 +244,54 @@ export default function Landing({ onLoginSuccess }) {
             <Sparkles size={18} fill="var(--ink-black)"/>
             Magic by Gemini
           </motion.div>
-          
-          <h1 style={{ 
-            fontSize: 'clamp(4rem, 10vw, 8rem)', 
-            fontWeight: '800', 
-            lineHeight: '1',
-            marginBottom: '1.5rem',
-            color: 'var(--marker-red)',
-            textShadow: '4px 4px 0px var(--ink-black)',
-            WebkitTextStroke: '2px var(--ink-black)'
-          }}>
-            Travi!
-          </h1>
+
+          {/* Animated Arrows Pointing to Logo - Perfectly Anchored to the Text */}
+          <div style={{ position: 'relative', display: 'inline-block', marginBottom: '1.5rem' }}>
+            
+            {/* Top Left Arrow */}
+            <div className="wiggle" style={{ position: 'absolute', top: '-40px', left: '-80px', transform: 'rotate(20deg)', pointerEvents: 'none' }}>
+              <svg width="80" height="80" viewBox="0 0 100 100">
+                <path d="M 10 10 Q 40 20, 80 80" fill="transparent" stroke="var(--marker-red)" strokeWidth="6" strokeLinecap="round" />
+                <polygon points="70,85 85,85 80,70" fill="var(--marker-red)" />
+              </svg>
+            </div>
+
+            {/* Top Right Arrow */}
+            <div className="pulse" style={{ position: 'absolute', top: '-30px', right: '-80px', transform: 'rotate(-40deg)', pointerEvents: 'none' }}>
+              <svg width="80" height="80" viewBox="0 0 100 100">
+                <path d="M 90 10 Q 60 20, 20 80" fill="transparent" stroke="var(--marker-green)" strokeWidth="6" strokeLinecap="round" strokeDasharray="8 8" />
+                <polygon points="15,70 15,85 30,85" fill="var(--marker-green)" />
+              </svg>
+            </div>
+
+            {/* Bottom Left Arrow */}
+            <div className="drift" style={{ position: 'absolute', bottom: '-40px', left: '-80px', transform: 'rotate(-20deg)', pointerEvents: 'none' }}>
+              <svg width="80" height="80" viewBox="0 0 100 100">
+                <path d="M 10 90 Q 50 80, 80 20" fill="transparent" stroke="var(--marker-blue)" strokeWidth="6" strokeLinecap="round" />
+                <polygon points="70,15 85,15 80,30" fill="var(--marker-blue)" />
+              </svg>
+            </div>
+
+            {/* Bottom Right Arrow */}
+            <div className="wiggle" style={{ position: 'absolute', bottom: '-20px', right: '-80px', transform: 'rotate(10deg)', pointerEvents: 'none' }}>
+              <svg width="80" height="80" viewBox="0 0 100 100">
+                <path d="M 90 90 Q 60 80, 20 20" fill="transparent" stroke="var(--marker-yellow)" strokeWidth="6" strokeLinecap="round" />
+                <polygon points="15,30 15,15 30,15" fill="var(--marker-yellow)" />
+              </svg>
+            </div>
+
+            <h1 style={{ 
+              fontSize: 'clamp(4rem, 10vw, 8rem)', 
+              fontWeight: '800', 
+              lineHeight: '1',
+              color: 'var(--marker-red)',
+              textShadow: '4px 4px 0px var(--ink-black)',
+              WebkitTextStroke: '2px var(--ink-black)',
+              margin: 0
+            }}>
+              Travi!
+            </h1>
+          </div>
           
           <p className="cartoon-font" style={{ 
             fontSize: '2.2rem', 
