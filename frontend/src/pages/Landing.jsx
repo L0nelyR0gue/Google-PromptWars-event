@@ -37,39 +37,48 @@ export default function Landing({ onLoginSuccess }) {
         >
           <motion.div variants={fadeUpVariant} style={{ marginBottom: '1.5rem' }}>
             <span style={{ 
-              background: 'rgba(255,255,255,0.05)', 
-              border: '1px solid rgba(255,255,255,0.1)', 
-              padding: '6px 12px', 
-              borderRadius: '20px',
+              background: 'var(--glass-bg)', 
+              border: '1px solid var(--glass-border)', 
+              padding: '8px 16px', 
+              borderRadius: '50px',
               fontSize: '0.85rem',
-              fontWeight: '500',
-              color: '#ccc'
+              fontWeight: '600',
+              color: 'var(--text-primary)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
             }}>
-              Powered by Gemini 2.0 Flash ✨
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--google-green)', boxShadow: '0 0 10px var(--google-green)' }} />
+              Powered by Gemini 2.0 Flash
             </span>
           </motion.div>
           
           <motion.h1 variants={fadeUpVariant} style={{ 
-            fontSize: 'clamp(3rem, 8vw, 5.5rem)', 
+            fontSize: 'clamp(3.5rem, 8vw, 6.5rem)', 
             fontWeight: '800', 
-            lineHeight: '1.1',
-            letterSpacing: '-0.03em',
+            lineHeight: '1.05',
+            letterSpacing: '-0.04em',
             marginBottom: '1.5rem',
-            background: 'linear-gradient(180deg, #FFFFFF 0%, #A0A0A0 100%)',
+            background: 'var(--google-gradient)',
             WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
+            WebkitTextFillColor: 'transparent',
+            filter: 'drop-shadow(0 4px 24px rgba(66, 133, 244, 0.2))'
           }}>
-            Travel planning,<br/>automated.
+            PromptWars<br/>Travel Engine.
           </motion.h1>
           
           <motion.p variants={fadeUpVariant} style={{ 
-            fontSize: '1.25rem', 
-            color: '#888', 
+            fontSize: '1.1rem', 
+            color: 'var(--text-secondary)', 
             maxWidth: '600px', 
             margin: '0 auto 3rem auto',
-            lineHeight: '1.6'
+            lineHeight: '1.6',
+            fontFamily: 'JetBrains Mono, monospace'
           }}>
-            Input your budget and constraints. Our AI engine crafts the perfect day-by-day itinerary and dynamically replans when the real world gets in the way.
+            > Input budget, dates & constraints.<br/>
+            > Orchestrating Gemini API...<br/>
+            > Outputting perfect day-by-day itinerary.
           </motion.p>
           
           <motion.div variants={fadeUpVariant}>
@@ -95,35 +104,37 @@ export default function Landing({ onLoginSuccess }) {
         <div style={{
           width: '100%',
           maxWidth: '1000px',
-          background: '#0a0a0a',
-          border: '1px solid rgba(255,255,255,0.1)',
+          background: 'var(--bg-color-secondary)',
+          border: '1px solid var(--glass-border)',
           borderRadius: '12px',
-          boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-          overflow: 'hidden'
+          boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
+          overflow: 'hidden',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)'
         }}>
           {/* Fake Browser Header */}
           <div style={{ 
             display: 'flex', 
             gap: '8px', 
             padding: '12px 16px', 
-            borderBottom: '1px solid rgba(255,255,255,0.05)',
-            background: '#111'
+            borderBottom: '1px solid var(--glass-border)',
+            background: 'var(--glass-bg)'
           }}>
-            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }} />
-            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }} />
-            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }} />
+            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--google-red)' }} />
+            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--google-yellow)' }} />
+            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--google-green)' }} />
           </div>
           {/* Fake Dashboard Content */}
-          <div style={{ padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', opacity: 0.7 }}>
-            <div style={{ background: '#111', borderRadius: '8px', padding: '1rem', height: '300px' }}>
-              <div style={{ height: '20px', width: '50%', background: '#222', borderRadius: '4px', marginBottom: '2rem' }} />
-              <div style={{ height: '40px', width: '100%', background: '#222', borderRadius: '4px', marginBottom: '1rem' }} />
-              <div style={{ height: '40px', width: '100%', background: '#222', borderRadius: '4px', marginBottom: '1rem' }} />
-              <div style={{ height: '40px', width: '100%', background: '#333', borderRadius: '4px' }} />
+          <div style={{ padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', opacity: 0.8 }}>
+            <div style={{ background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '8px', padding: '1rem', height: '300px' }}>
+              <div style={{ height: '20px', width: '50%', background: 'var(--glass-border)', borderRadius: '4px', marginBottom: '2rem' }} />
+              <div style={{ height: '40px', width: '100%', background: 'var(--glass-border)', borderRadius: '4px', marginBottom: '1rem' }} />
+              <div style={{ height: '40px', width: '100%', background: 'var(--glass-border)', borderRadius: '4px', marginBottom: '1rem' }} />
+              <div style={{ height: '40px', width: '100%', background: 'var(--glass-border)', borderRadius: '4px' }} />
             </div>
-            <div style={{ background: '#111', borderRadius: '8px', padding: '1rem' }}>
-               <div style={{ height: '100%', width: '100%', background: '#1a1a1a', borderRadius: '4px', border: '1px dashed #333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                 <Map size={48} color="#333" />
+            <div style={{ background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '8px', padding: '1rem' }}>
+               <div style={{ height: '100%', width: '100%', background: 'var(--glass-bg)', borderRadius: '4px', border: '1px dashed var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                 <Map size={48} color="var(--text-secondary)" />
                </div>
             </div>
           </div>
@@ -131,12 +142,11 @@ export default function Landing({ onLoginSuccess }) {
       </motion.section>
 
       {/* Tech Stack / Social Proof */}
-      <section style={{ padding: '6rem 0 4rem 0', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <p style={{ color: '#666', fontSize: '0.9rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2rem' }}>
+      <section style={{ padding: '6rem 0 4rem 0', textAlign: 'center', borderBottom: '1px solid var(--glass-border)' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2rem' }}>
           Built with cutting-edge technology
         </p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '4rem', flexWrap: 'wrap', opacity: 0.5, filter: 'grayscale(100%)' }}>
-          {/* Placeholder text for logos since we don't have SVGs */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '4rem', flexWrap: 'wrap', color: 'var(--text-secondary)' }}>
           <span style={{ fontSize: '1.2rem', fontWeight: '700' }}>Google Cloud</span>
           <span style={{ fontSize: '1.2rem', fontWeight: '700' }}>Firebase</span>
           <span style={{ fontSize: '1.2rem', fontWeight: '700' }}>Gemini AI</span>
@@ -153,10 +163,10 @@ export default function Landing({ onLoginSuccess }) {
           variants={staggerContainer}
           style={{ textAlign: 'center', marginBottom: '4rem' }}
         >
-          <motion.h2 variants={fadeUpVariant} style={{ fontSize: '2.5rem', marginBottom: '1rem', fontWeight: '700' }}>
+          <motion.h2 variants={fadeUpVariant} style={{ fontSize: '2.5rem', marginBottom: '1rem', fontWeight: '700', color: 'var(--text-primary)' }}>
             Everything you need for the perfect trip.
           </motion.h2>
-          <motion.p variants={fadeUpVariant} style={{ color: '#888', maxWidth: '500px', margin: '0 auto' }}>
+          <motion.p variants={fadeUpVariant} style={{ color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto', lineHeight: '1.6' }}>
             A powerful orchestrator that handles APIs, weather data, and strict constraints so you don't have to.
           </motion.p>
         </motion.div>
@@ -174,9 +184,9 @@ export default function Landing({ onLoginSuccess }) {
             className="glass-panel"
             style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', minHeight: '250px' }}
           >
-            <Zap size={32} color="#fff" style={{ marginBottom: '1.5rem' }} />
-            <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Context-Aware AI</h3>
-            <p style={{ color: '#888', fontSize: '0.95rem', lineHeight: '1.5' }}>
+            <Zap size={32} color="var(--google-yellow)" style={{ marginBottom: '1.5rem' }} />
+            <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Context-Aware AI</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.5' }}>
               Gemini understands complex constraints like dietary needs and strict budgets before planning.
             </p>
           </motion.div>
@@ -187,9 +197,9 @@ export default function Landing({ onLoginSuccess }) {
             className="glass-panel"
             style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', minHeight: '250px' }}
           >
-            <Cloud size={32} color="#fff" style={{ marginBottom: '1.5rem' }} />
-            <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Real-Time Adaptation</h3>
-            <p style={{ color: '#888', fontSize: '0.95rem', lineHeight: '1.5' }}>
+            <Cloud size={32} color="var(--google-blue)" style={{ marginBottom: '1.5rem' }} />
+            <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Real-Time Adaptation</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.5' }}>
               Weather turned bad? The engine automatically swaps outdoor activities for indoor alternatives.
             </p>
           </motion.div>
@@ -201,20 +211,22 @@ export default function Landing({ onLoginSuccess }) {
             style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: '3rem', padding: '3rem' }}
           >
             <div style={{ flex: 1 }}>
-              <Shield size={32} color="#fff" style={{ marginBottom: '1.5rem' }} />
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Enterprise Security</h3>
-              <p style={{ color: '#888', fontSize: '1rem', lineHeight: '1.5' }}>
+              <Shield size={32} color="var(--google-green)" style={{ marginBottom: '1.5rem' }} />
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Enterprise Security</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.5' }}>
                 Your data is secured using Google Cloud Secret Manager and robust input validation. Safe, private, and fully compliant.
               </p>
             </div>
-            <div style={{ flex: 1, background: '#111', borderRadius: '8px', padding: '1.5rem', border: '1px solid #222' }}>
-               <pre style={{ color: '#0f0', fontSize: '0.8rem', margin: 0, fontFamily: 'monospace' }}>
-{`{
+            <div style={{ flex: 1, background: 'var(--glass-bg)', borderRadius: '8px', padding: '1.5rem', border: '1px solid var(--glass-border)' }}>
+               <pre style={{ color: 'var(--google-green)', fontSize: '0.8rem', margin: 0, fontFamily: 'JetBrains Mono, monospace' }}>
+{`> RUN_SECURITY_CHECK()
+{
   "status": "secured",
   "auth": "firebase",
   "encryption": "aes-256",
   "rateLimit": "100/min"
-}`}
+}
+> _`}
                </pre>
             </div>
           </motion.div>

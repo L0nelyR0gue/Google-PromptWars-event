@@ -1,17 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-  --bg-color: #050505; /* Deep YC dark mode */
-  --bg-color-secondary: #0a0a0a;
-  --text-color: #ffffff;
-  --text-muted: #888888;
-  --accent-google-blue: #4285F4;
-  --accent-google-red: #EA4335;
-  --accent-google-yellow: #FBBC05;
-  --accent-google-green: #34A853;
-  --glass-bg: rgba(255, 255, 255, 0.02);
+  /* Google Brand Colors */
+  --google-blue: #4285F4;
+  --google-red: #EA4335;
+  --google-yellow: #FBBC05;
+  --google-green: #34A853;
+
+  /* Default to Dark Mode (Ethereal Glass + Cyberpunk) */
+  --bg-color: #050505;
+  --bg-color-secondary: rgba(15, 15, 15, 0.6);
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
   --glass-border: rgba(255, 255, 255, 0.08);
-  --primary-gradient: linear-gradient(135deg, #ffffff, #a0a0a0);
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --navbar-bg: rgba(5, 5, 5, 0.7);
+  
+  --google-gradient: linear-gradient(135deg, var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green));
+}
+
+[data-theme='light'] {
+  --bg-color: #ffffff;
+  --bg-color-secondary: rgba(245, 245, 245, 0.6);
+  --text-primary: #111111;
+  --text-secondary: #666666;
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(0, 0, 0, 0.02);
+  --navbar-bg: rgba(255, 255, 255, 0.7);
 }
 
 * {
@@ -23,32 +38,49 @@
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-color);
-  color: var(--text-color);
+  color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
-  /* Very subtle radial glow in the center */
-  background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05), transparent 40%);
-  background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ambient Google Glow */
+.ambient-glow {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+  background: 
+    radial-gradient(circle at 15% 30%, rgba(66, 133, 244, 0.08) 0%, transparent 40%), /* Blue */
+    radial-gradient(circle at 85% 20%, rgba(234, 67, 53, 0.08) 0%, transparent 40%), /* Red */
+    radial-gradient(circle at 20% 80%, rgba(251, 188, 5, 0.08) 0%, transparent 40%), /* Yellow */
+    radial-gradient(circle at 80% 85%, rgba(52, 168, 83, 0.08) 0%, transparent 40%); /* Green */
 }
 
 .app-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 2rem;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* Glassmorphism utility -> Sleek YC Box */
+/* Glassmorphism utility -> Sleek Ethereal Box */
 .glass-panel {
   background: var(--bg-color-secondary);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 

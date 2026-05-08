@@ -10,6 +10,16 @@ import './index.css';
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    // Apply theme to document element
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
 
   useEffect(() => {
     // Listen for Firebase auth state changes
@@ -30,28 +40,18 @@ function App() {
   };
 
   if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>Loading...</div>;
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>Loading...</div>;
   }
 
   return (
     <Router>
+      <div className="ambient-glow"></div>
       <div className="app-container">
-        <Navbar user={user} onSignOut={handleSignOut} />
+        <Navbar user={user} onSignOut={handleSignOut} theme={theme} toggleTheme={toggleTheme} />
         
         <Routes>
-          {/* If user is logged in, redirect root to dashboard. Otherwise show landing */}
-          <Route 
-            path="/" 
-            element={user ? <Navigate to="/dashboard" replace /> : <Landing onLoginSuccess={setUser} />} 
-          />
-          
-          {/* Dashboard Route (Protected inside the component) */}
-          <Route 
-            path="/dashboard" 
-            element={<Dashboard user={user} />} 
-          />
-          
-          {/* Fallback route */}
+          <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Landing onLoginSuccess={setUser} theme={theme} />} />
+          <Route path="/dashboard" element={<Dashboard user={user} theme={theme} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
