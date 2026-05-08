@@ -51,13 +51,20 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS
+# CORS — restrict to known origins in production
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",          # Vite dev server
+    "http://localhost:8080",          # Local production preview
+    "https://travi-cd6fa.web.app",    # Firebase Hosting
+    "https://travi-cd6fa.firebaseapp.com",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 # Security headers

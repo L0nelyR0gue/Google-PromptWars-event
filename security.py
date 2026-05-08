@@ -98,15 +98,26 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
 
-        # Content Security Policy
+        # Content Security Policy — includes Google Maps domains
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com; "
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
+            "https://apis.google.com https://www.gstatic.com "
+            "https://maps.googleapis.com https://maps.google.com; "
+            "style-src 'self' 'unsafe-inline' "
+            "https://fonts.googleapis.com https://maps.googleapis.com; "
             "font-src 'self' https://fonts.gstatic.com; "
-            "img-src 'self' data: https: blob:; "
-            "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://api.open-meteo.com https://geocoding-api.open-meteo.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; "
-            "frame-src https://*.firebaseapp.com https://accounts.google.com;"
+            "img-src 'self' data: blob: https: "
+            "https://*.googleapis.com https://*.gstatic.com "
+            "https://maps.gstatic.com https://*.google.com; "
+            "connect-src 'self' "
+            "https://*.googleapis.com https://*.firebaseio.com "
+            "https://api.open-meteo.com https://geocoding-api.open-meteo.com "
+            "https://identitytoolkit.googleapis.com "
+            "https://securetoken.googleapis.com "
+            "https://maps.googleapis.com https://api.groq.com; "
+            "frame-src https://*.firebaseapp.com https://accounts.google.com; "
+            "worker-src blob:;"
         )
 
         return response

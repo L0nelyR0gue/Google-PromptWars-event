@@ -52,6 +52,8 @@ const CustomCursor = () => {
   );
 };
 
+import ErrorBoundary from './components/ErrorBoundary';
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -107,42 +109,44 @@ function App() {
   }
 
   return (
-    <Router>
-      <CustomCursor />
-      <div className="ambient-glow"></div>
-      <div className="app-container">
-        <Navbar 
-          user={user} 
-          onSignOut={handleSignOut} 
-          theme={theme} 
-          toggleTheme={toggleTheme} 
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          onOpenFriends={() => setIsFriendsOpen(true)}
-        />
-        
-        {isSettingsOpen && user && (
-          <SettingsModal 
+    <ErrorBoundary>
+      <Router>
+        <CustomCursor />
+        <div className="ambient-glow"></div>
+        <div className="app-container">
+          <Navbar 
             user={user} 
-            onClose={() => setIsSettingsOpen(false)} 
-            onUserUpdated={handleUserUpdated}
-            onSignOut={handleSignOut}
+            onSignOut={handleSignOut} 
+            theme={theme} 
+            toggleTheme={toggleTheme} 
+            onOpenSettings={() => setIsSettingsOpen(true)}
+            onOpenFriends={() => setIsFriendsOpen(true)}
           />
-        )}
+          
+          {isSettingsOpen && user && (
+            <SettingsModal 
+              user={user} 
+              onClose={() => setIsSettingsOpen(false)} 
+              onUserUpdated={handleUserUpdated}
+              onSignOut={handleSignOut}
+            />
+          )}
 
-        {isFriendsOpen && user && (
-          <FriendSystem 
-            user={user} 
-            onClose={() => setIsFriendsOpen(false)} 
-          />
-        )}
+          {isFriendsOpen && user && (
+            <FriendSystem 
+              user={user} 
+              onClose={() => setIsFriendsOpen(false)} 
+            />
+          )}
 
-        <Routes>
-          <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Landing onLoginSuccess={setUser} theme={theme} />} />
-          <Route path="/dashboard" element={<Dashboard user={user} theme={theme} />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
-    </Router>
+          <Routes>
+            <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Landing onLoginSuccess={setUser} theme={theme} />} />
+            <Route path="/dashboard" element={<Dashboard user={user} theme={theme} />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
