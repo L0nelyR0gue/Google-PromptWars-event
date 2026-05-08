@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Bookmark, Trash2, Eye } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Bookmark, Trash2, Eye, Share2 } from 'lucide-react';
 import { saveTrip, subscribeToSavedTrips, deleteSavedTrip } from '../services/firestoreService';
 import ItineraryMap from '../components/ItineraryMap';
 import TripChatbot from '../components/TripChatbot';
+import ShareTripModal from '../components/ShareTripModal';
 
 const PREFERENCE_OPTIONS = [
   { id: 'street-food', label: '🍜 Street Food', value: 'street food' },
@@ -49,6 +50,7 @@ export default function Dashboard({ user }) {
   const [savedTrips, setSavedTrips] = useState([]);
   const [saveStatus, setSaveStatus] = useState(''); // '' | 'saving' | 'saved'
   const [viewingSavedTrip, setViewingSavedTrip] = useState(null);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   // Carousel state
   const [activeDay, setActiveDay] = useState(0);
@@ -513,6 +515,29 @@ export default function Dashboard({ user }) {
                       <Bookmark size={18} fill={saveStatus === 'saved' ? 'white' : 'none'} />
                       {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved!' : 'Save Trip'}
                     </button>
+                    {/* Share Trip Button */}
+                    {user && (
+                      <button
+                        onClick={() => setIsShareOpen(true)}
+                        style={{
+                          padding: '0.6rem 1rem', borderRadius: '8px',
+                          border: '2px solid var(--ink-black)',
+                          background: 'var(--marker-blue)',
+                          color: 'white',
+                          fontFamily: 'Nunito, sans-serif', fontWeight: 'bold', fontSize: '1rem',
+                          cursor: 'pointer',
+                          boxShadow: '3px 3px 0px var(--ink-black)',
+                          display: 'flex', alignItems: 'center', gap: '6px',
+                          whiteSpace: 'nowrap', flexShrink: 0,
+                          transition: 'all 0.15s',
+                        }}
+                        onMouseOver={(e) => { e.currentTarget.style.transform = 'translate(-2px, -2px)'; e.currentTarget.style.boxShadow = '5px 5px 0px var(--ink-black)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.transform = 'translate(0)'; e.currentTarget.style.boxShadow = '3px 3px 0px var(--ink-black)'; }}
+                      >
+                        <Share2 size={18} />
+                        Share Trip
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -844,6 +869,20 @@ export default function Dashboard({ user }) {
           .comic-box > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
         }
       `}</style>
+
+      {/* Share Trip Modal */}
+      <AnimatePresence>
+        {isShareOpen && itinerary && user && (
+          <ShareTripModal
+            user={user}
+            itinerary={itinerary}
+            destination={itinerary.destination || destination}
+            startDate={startDate}
+            endDate={endDate}
+            onClose={() => setIsShareOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }
