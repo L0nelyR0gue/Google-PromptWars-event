@@ -114,9 +114,9 @@ export default function Landing({ onLoginSuccess }) {
       <main style={{ paddingBottom: '6rem', position: 'relative' }} ref={containerRef}>
         
         {/* STORYTELLING SCENERY (Spanning Full Height of Document, overflow hidden to prevent scrollbars) */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1, pointerEvents: 'none', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: 'calc(50% - 50vw)', width: '100vw', height: '100%', minHeight: '2000px', zIndex: -1, pointerEvents: 'none', overflow: 'hidden' }}>
           
-          <svg style={{ position: 'absolute', width: '100%', height: '100%', minHeight: '2000px' }}>
+          <svg style={{ position: 'absolute', width: '100vw', height: '100%', minHeight: '2000px' }}>
             <path d="M -200 400 Q 300 -100, 700 200 T 1400 600 T 200 1200 T 1000 1800" fill="transparent" stroke="var(--marker-blue)" strokeWidth="3" strokeDasharray="12 12" opacity={0.6} />
             
             <path d="M -50 500 Q 100 350, 250 500 T 500 500" fill="transparent" stroke="var(--ink-black)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity={0.3} />
