@@ -24,8 +24,6 @@
   --shadow-hover: 10px 10px 0px var(--ink-black);
 }
 
-/* Remove data-theme logic since we are purely a sketchbook theme now */
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -40,7 +38,7 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  user-select: none; /* Prevents the text cursor on click */
+  user-select: none;
   -webkit-user-select: none;
 }
 
@@ -85,11 +83,11 @@ h1, h2, h3, h4, h5, h6, .cartoon-font {
   box-shadow: var(--shadow-hover);
 }
 
-.comic-box-blue { border-color: var(--marker-blue); box-shadow: 6px 6px 0px var(--marker-blue); }
-.comic-box-blue:hover { box-shadow: 10px 10px 0px var(--marker-blue); }
-
 .comic-box-yellow { border-color: var(--marker-yellow); box-shadow: 6px 6px 0px var(--marker-yellow); }
 .comic-box-yellow:hover { box-shadow: 10px 10px 0px var(--marker-yellow); }
+
+.comic-box-blue { border-color: var(--marker-blue); box-shadow: 6px 6px 0px var(--marker-blue); }
+.comic-box-blue:hover { box-shadow: 10px 10px 0px var(--marker-blue); }
 
 .comic-box-green { border-color: var(--marker-green); box-shadow: 6px 6px 0px var(--marker-green); }
 .comic-box-green:hover { box-shadow: 10px 10px 0px var(--marker-green); }
@@ -97,114 +95,18 @@ h1, h2, h3, h4, h5, h6, .cartoon-font {
 .comic-box-red { border-color: var(--marker-red); box-shadow: 6px 6px 0px var(--marker-red); }
 .comic-box-red:hover { box-shadow: 10px 10px 0px var(--marker-red); }
 
-/* Hero Section */
-.hero {
-  text-align: center;
-  margin-top: 4rem;
-  margin-bottom: 4rem;
-  animation: fadeIn 1s ease-out forwards;
+/* Flight Path Animation */
+@keyframes flyAlongPath {
+  0% { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
 }
 
-.hero h1 {
-  font-size: 4rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  line-height: 1.2;
-}
-
-.hero p {
-  font-size: 1.25rem;
-  color: #a0a0a0;
-  max-width: 600px;
-  margin: 0 auto;
-  font-weight: 300;
-}
-
-/* Google Auth Button */
-.google-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background-color: #ffffff;
-  color: #3c4043;
-  font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: all 0.2s ease;
-  margin-top: 2rem;
-}
-
-.google-btn:hover {
-  background-color: #f8f9fa;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-  transform: scale(1.02);
-}
-
-.google-btn img {
-  width: 20px;
-  height: 20px;
-}
-
-/* Features Grid */
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.feature-card {
-  padding: 2rem;
-}
-
-.feature-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
-.feature-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: #fff;
-}
-
-.feature-card p {
-  color: #a0a0a0;
-  line-height: 1.6;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.nav-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logo span {
-  color: var(--accent-google-blue);
+.plane-follower {
+  position: absolute;
+  top: 0; left: 0;
+  offset-path: path('M -200 400 Q 300 -100, 700 200 T 1400 -50');
+  animation: flyAlongPath 12s linear infinite;
+  offset-rotate: auto;
+  z-index: -1;
+  pointer-events: none;
 }

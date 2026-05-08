@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import gsap from 'gsap';
-import { Zap, Map, Shield, Cloud, MapPin, Sparkles, Star, Navigation, Camera, Luggage, Compass, Users } from 'lucide-react';
+import { Zap, Map, Shield, Cloud, MapPin, Sparkles, Star, Navigation, Camera, Luggage, Compass, Users, Home, Plane, Ticket, Coffee, TreePalm, ArrowRight } from 'lucide-react';
 import Login from '../components/Login';
 
 export default function Landing({ onLoginSuccess }) {
@@ -10,13 +10,11 @@ export default function Landing({ onLoginSuccess }) {
   const doodlesRef = useRef([]);
   const uiElementsRef = useRef([]);
 
-  // State for dynamic background color on card hover
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // Muted 3D Tilt for UI Display
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-200, 200], [8, -8]); // Toned down tilt
+  const rotateX = useTransform(y, [-200, 200], [8, -8]);
   const rotateY = useTransform(x, [-200, 200], [-8, 8]);
 
   const handleMouseMove = (event) => {
@@ -32,36 +30,35 @@ export default function Landing({ onLoginSuccess }) {
     y.set(0);
   };
 
-  // Determine Background Color
   const getBackgroundColor = () => {
     switch (hoveredCard) {
       case 'yellow': return 'var(--bg-yellow)';
       case 'blue': return 'var(--bg-blue)';
       case 'green': return 'var(--bg-green)';
       case 'red': return 'var(--bg-red)';
-      default: return 'transparent'; // Shows the paper-white from body
+      default: return 'transparent'; 
     }
   };
 
   useEffect(() => {
-    // 1. Initial Bouncy Load
     gsap.fromTo(containerRef.current.children, 
       { y: 60, opacity: 0, scale: 0.9, rotation: () => Math.random() * 10 - 5 },
       { y: 0, opacity: 1, scale: 1, rotation: 0, duration: 1.2, stagger: 0.15, ease: "elastic.out(1, 0.4)" }
     );
 
-    // 2. Continuous Doodle Animations
     doodlesRef.current.forEach((doodle, i) => {
       if(!doodle) return;
       if (doodle.classList.contains('drift')) {
-        gsap.to(doodle, { y: '+=15', rotation: '+=5', duration: 4 + i, yoyo: true, repeat: -1, ease: "sine.inOut" });
+        gsap.to(doodle, { x: '+=20', y: '+=15', rotation: '+=5', duration: 4 + i, yoyo: true, repeat: -1, ease: "sine.inOut" });
       }
       if (doodle.classList.contains('pulse')) {
         gsap.to(doodle, { scale: 1.2, rotation: 45, duration: 2 + i, yoyo: true, repeat: -1, ease: "sine.inOut" });
       }
+      if (doodle.classList.contains('wiggle')) {
+        gsap.to(doodle, { rotation: 10, x: 5, duration: 1 + (i*0.2), yoyo: true, repeat: -1, ease: "sine.inOut" });
+      }
     });
 
-    // 3. Card Micro-Interactions
     cardsRef.current.forEach(card => {
       if(!card) return;
       card.addEventListener('mouseenter', () => {
@@ -72,7 +69,6 @@ export default function Landing({ onLoginSuccess }) {
       });
     });
 
-    // 4. UI Elements Micro-Interactions
     uiElementsRef.current.forEach(el => {
       if(!el) return;
       el.addEventListener('mouseenter', () => {
@@ -92,7 +88,6 @@ export default function Landing({ onLoginSuccess }) {
 
   return (
     <>
-      {/* Dynamic Background Overlay */}
       <div style={{
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
@@ -104,36 +99,105 @@ export default function Landing({ onLoginSuccess }) {
 
       <main style={{ paddingBottom: '6rem', position: 'relative', overflowX: 'hidden' }} ref={containerRef}>
         
-        {/* Diverse Background Doodles (Animated by GSAP) */}
-        <div ref={el => doodlesRef.current[0] = el} className="drift" style={{ position: 'absolute', top: '15%', left: '8%', opacity: 0.3, transform: 'rotate(-15deg)', pointerEvents: 'none' }}>
-          <Camera size={60} color="var(--marker-blue)" />
-        </div>
-        <div ref={el => doodlesRef.current[1] = el} className="drift" style={{ position: 'absolute', top: '45%', right: '8%', opacity: 0.3, transform: 'rotate(20deg)', pointerEvents: 'none' }}>
-          <Luggage size={70} color="var(--marker-red)" />
-        </div>
-        <div ref={el => doodlesRef.current[2] = el} className="drift" style={{ position: 'absolute', top: '75%', left: '10%', opacity: 0.3, transform: 'rotate(-5deg)', pointerEvents: 'none' }}>
-          <Compass size={80} color="var(--marker-green)" />
-        </div>
-        <div ref={el => doodlesRef.current[3] = el} className="pulse" style={{ position: 'absolute', top: '25%', right: '20%', opacity: 0.5, pointerEvents: 'none' }}>
-          <Star size={30} color="var(--marker-yellow)" fill="var(--marker-yellow)" />
-        </div>
-        <div ref={el => doodlesRef.current[4] = el} className="pulse" style={{ position: 'absolute', top: '60%', left: '20%', opacity: 0.4, pointerEvents: 'none' }}>
-          <Star size={20} color="var(--marker-red)" fill="var(--marker-red)" />
+        {/* STORYTELLING SCENERY (Behind Hero) */}
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '800px', zIndex: -1, pointerEvents: 'none' }}>
+          
+          {/* Hand-drawn SVG Mountains & Sun */}
+          <svg style={{ position: 'absolute', width: '100%', height: '100%' }}>
+            {/* Massive flight path */}
+            <path d="M -200 400 Q 300 -100, 700 200 T 1400 -50" fill="transparent" stroke="var(--marker-blue)" strokeWidth="3" strokeDasharray="12 12" opacity={0.6} />
+            
+            {/* Mountains Bottom Left */}
+            <path d="M -50 500 Q 100 350, 250 500 T 500 500" fill="transparent" stroke="var(--ink-black)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity={0.3} />
+            <path d="M 50 500 Q 200 300, 350 500" fill="transparent" stroke="var(--ink-black)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity={0.3} />
+            
+            {/* Hand-drawn Sun Top Right */}
+            <circle cx="85%" cy="15%" r="40" fill="transparent" stroke="var(--marker-yellow)" strokeWidth="4" />
+            <path d="M 85% 5% L 85% 0% M 85% 25% L 85% 30% M 75% 15% L 70% 15% M 95% 15% L 100% 15% M 78% 8% L 73% 3% M 92% 22% L 97% 27% M 92% 8% L 97% 3% M 78% 22% L 73% 27%" stroke="var(--marker-yellow)" strokeWidth="4" strokeLinecap="round" />
+            
+            {/* Arrows pointing to the logo */}
+            <path d="M 40% 10% Q 45% 20%, 48% 28%" fill="transparent" stroke="var(--marker-red)" strokeWidth="3" strokeLinecap="round" />
+            <polygon points="46%,26% 48%,28% 49%,25%" fill="var(--marker-red)" />
+          </svg>
+
+          {/* Plane following the SVG path (CSS offset-path animation) */}
+          <div className="plane-follower">
+            <Plane size={32} color="var(--marker-red)" fill="var(--marker-red)" style={{ transform: 'rotate(45deg)' }} />
+          </div>
+
+          {/* Story Stops on the path */}
+          <div className="wiggle" style={{ position: 'absolute', top: '380px', left: '10%' }}>
+            <Home size={40} color="var(--ink-black)" fill="var(--paper-white)" strokeWidth={1.5} />
+            <div className="cartoon-font" style={{ position: 'absolute', top: '-25px', left: '20px', color: 'var(--text-secondary)' }}>Zzz...</div>
+          </div>
+          
+          <div className="drift" style={{ position: 'absolute', top: '150px', left: '65%' }}>
+            <MapPin size={48} color="var(--marker-red)" fill="var(--paper-white)" strokeWidth={1.5} />
+            <div className="cartoon-font" style={{ position: 'absolute', top: '-30px', left: '-20px', color: 'var(--marker-red)', fontSize: '1.5rem', whiteSpace: 'nowrap', transform: 'rotate(-5deg)' }}>Destination!</div>
+          </div>
+
+          {/* DENSE ICON EXPLOSION */}
+          {/* Left Side */}
+          <div ref={el => doodlesRef.current[0] = el} className="drift" style={{ position: 'absolute', top: '15%', left: '5%', opacity: 0.4, transform: 'rotate(-15deg)' }}>
+            <Camera size={50} color="var(--marker-blue)" />
+          </div>
+          <div ref={el => doodlesRef.current[1] = el} className="pulse" style={{ position: 'absolute', top: '30%', left: '25%', opacity: 0.5 }}>
+            <Star size={30} color="var(--marker-yellow)" fill="var(--marker-yellow)" />
+          </div>
+          <div ref={el => doodlesRef.current[2] = el} className="wiggle" style={{ position: 'absolute', top: '65%', left: '8%', opacity: 0.4, transform: 'rotate(10deg)' }}>
+            <Luggage size={60} color="var(--marker-green)" />
+          </div>
+          <div ref={el => doodlesRef.current[3] = el} className="drift" style={{ position: 'absolute', top: '80%', left: '20%', opacity: 0.3, transform: 'rotate(-25deg)' }}>
+            <Ticket size={45} color="var(--marker-red)" />
+          </div>
+
+          {/* Right Side */}
+          <div ref={el => doodlesRef.current[4] = el} className="drift" style={{ position: 'absolute', top: '25%', right: '8%', opacity: 0.4, transform: 'rotate(20deg)' }}>
+            <Compass size={65} color="var(--ink-black)" />
+          </div>
+          <div ref={el => doodlesRef.current[5] = el} className="pulse" style={{ position: 'absolute', top: '50%', right: '20%', opacity: 0.4 }}>
+            <Star size={24} color="var(--marker-red)" fill="var(--marker-red)" />
+          </div>
+          <div ref={el => doodlesRef.current[6] = el} className="drift" style={{ position: 'absolute', top: '75%', right: '10%', opacity: 0.3, transform: 'rotate(-10deg)' }}>
+            <Coffee size={50} color="var(--marker-blue)" />
+          </div>
+          <div ref={el => doodlesRef.current[7] = el} className="wiggle" style={{ position: 'absolute', top: '10%', right: '25%', opacity: 0.5, transform: 'rotate(15deg)' }}>
+            <TreePalm size={55} color="var(--marker-green)" />
+          </div>
+
+          {/* Clouds */}
+          <div ref={el => doodlesRef.current[8] = el} className="drift" style={{ position: 'absolute', top: '40%', left: '8%', opacity: 0.2, transform: 'rotate(5deg)' }}>
+            <Cloud size={80} color="var(--marker-blue)" fill="var(--paper-white)" strokeWidth={1} />
+          </div>
+          <div ref={el => doodlesRef.current[9] = el} className="drift" style={{ position: 'absolute', top: '15%', right: '35%', opacity: 0.2, transform: 'rotate(-5deg)' }}>
+            <Cloud size={100} color="var(--marker-blue)" fill="var(--paper-white)" strokeWidth={1} />
+          </div>
+
+          {/* Handwritten Text Annotations */}
+          <div className="cartoon-font drift" style={{ position: 'absolute', top: '20%', left: '15%', fontSize: '2rem', color: 'var(--text-secondary)', transform: 'rotate(-15deg)' }}>
+            Pack your bags!
+          </div>
+          <div className="cartoon-font drift" style={{ position: 'absolute', top: '65%', right: '15%', fontSize: '2.5rem', color: 'var(--marker-blue)', transform: 'rotate(10deg)' }}>
+            Let's go! <ArrowRight size={24} style={{display: 'inline', verticalAlign: 'middle'}}/>
+          </div>
+          <div className="cartoon-font wiggle" style={{ position: 'absolute', top: '85%', left: '30%', fontSize: '1.8rem', color: 'var(--marker-green)', transform: 'rotate(-5deg)' }}>
+            Adventure awaits!
+          </div>
         </div>
 
         {/* 1. Hero Section */}
         <section style={{ 
-          minHeight: '50vh', 
+          minHeight: '60vh', 
           display: 'flex', 
           flexDirection: 'column', 
           justifyContent: 'center', 
           alignItems: 'center',
           textAlign: 'center',
-          paddingTop: '4rem',
-          paddingBottom: '2rem'
+          paddingTop: '6rem',
+          paddingBottom: '2rem',
+          position: 'relative'
         }}>
           
-          {/* Fun Sticker Badge */}
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9 }}
@@ -201,7 +265,6 @@ export default function Landing({ onLoginSuccess }) {
             }}
           >
             <div className="comic-box" style={{ width: '100%', position: 'relative' }}>
-              {/* Tape Doodle */}
               <div style={{ position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%) rotate(-2deg)', width: '100px', height: '30px', background: 'rgba(255,255,255,0.7)', border: '1px solid #ccc', boxShadow: '1px 1px 3px rgba(0,0,0,0.1)', zIndex: 10 }}></div>
               
               <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
@@ -209,11 +272,9 @@ export default function Landing({ onLoginSuccess }) {
               </div>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
-                {/* Itinerary List */}
                 <div style={{ border: '3px dashed var(--ink-black)', borderRadius: '12px', padding: '1rem', background: '#fff' }}>
                   <div style={{ height: '24px', width: '60%', background: 'var(--marker-yellow)', borderRadius: '4px', marginBottom: '1.5rem', border: '2px solid var(--ink-black)' }} />
                   
-                  {/* Reactive Itinerary Items */}
                   <div ref={el => uiElementsRef.current[0] = el} style={{ padding: '0.5rem', borderRadius: '8px', borderBottom: '2px solid #ddd', marginBottom: '0.5rem', display: 'flex', alignItems: 'center' }}>
                     <MapPin size={24} color="var(--marker-red)" style={{marginRight: '12px'}} /> <span style={{ fontWeight: 800 }}>Day 1: Arrival</span>
                   </div>
@@ -225,10 +286,8 @@ export default function Landing({ onLoginSuccess }) {
                   </div>
                 </div>
 
-                {/* Map Area */}
                 <div style={{ background: '#f0f0f0', border: '3px solid var(--ink-black)', borderRadius: '12px', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
                    <Map size={80} color="var(--text-secondary)" opacity={0.3} />
-                   {/* Map Path Doodle inside map */}
                    <svg style={{ position: 'absolute', width: '100%', height: '100%' }}>
                       <motion.path 
                         d="M 50 150 Q 150 50, 250 150 T 450 100" 
@@ -269,7 +328,6 @@ export default function Landing({ onLoginSuccess }) {
             maxWidth: '1000px',
             margin: '0 auto'
           }}>
-            {/* Feature 1 */}
             <div 
               ref={el => cardsRef.current[0] = el} 
               onMouseEnter={() => setHoveredCard('yellow')}
@@ -284,7 +342,6 @@ export default function Landing({ onLoginSuccess }) {
               </p>
             </div>
 
-            {/* Feature 2 */}
             <div 
               ref={el => cardsRef.current[1] = el} 
               onMouseEnter={() => setHoveredCard('blue')}
@@ -299,7 +356,6 @@ export default function Landing({ onLoginSuccess }) {
               </p>
             </div>
 
-            {/* Feature 3 */}
             <div 
               ref={el => cardsRef.current[2] = el} 
               onMouseEnter={() => setHoveredCard('green')}
@@ -314,7 +370,6 @@ export default function Landing({ onLoginSuccess }) {
               </p>
             </div>
 
-            {/* Feature 4 (NEW) */}
             <div 
               ref={el => cardsRef.current[3] = el} 
               onMouseEnter={() => setHoveredCard('red')}
@@ -328,7 +383,6 @@ export default function Landing({ onLoginSuccess }) {
                 Invite friends, vote on activities, and sync the perfect itinerary together!
               </p>
             </div>
-
           </div>
         </section>
       </main>
