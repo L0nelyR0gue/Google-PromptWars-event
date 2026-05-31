@@ -9,7 +9,7 @@
    ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝
 ```
 
-### ✈️ AI-Powered Travel Planning. Built for Humans.
+### ✈️ AI-Powered Travel Planning. Built for Humans. Winner of hackathon!
 
 *Built at **PromptWars: Hyderabad** — Google for Developers × Hack2Skill*
 
