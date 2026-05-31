@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 
 /**
  * ItineraryMap — Renders a Google Map with markers for the active day's
@@ -53,7 +53,7 @@ function loadGoogleMaps(apiKey) {
   return _loadPromise;
 }
 
-export default function ItineraryMap({ day, mapsApiKey, destination }) {
+export default function ItineraryMap({ day, mapsApiKey }) {
   const mapRef = useRef(null);
   const mapContainerRef = useRef(null);
   const markersRef = useRef([]);
@@ -139,7 +139,7 @@ export default function ItineraryMap({ day, mapsApiKey, destination }) {
     });
 
     infoWindowRef.current = new window.google.maps.InfoWindow();
-  }, [mapReady]);
+  }, [markerData, mapReady]);
 
   // Update markers whenever markerData changes
   useEffect(() => {

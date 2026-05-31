@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Bookmark, Trash2, Eye, Share2 } from 'lucide-react';
@@ -49,7 +49,6 @@ export default function Dashboard({ user }) {
   const [replanLoading, setReplanLoading] = useState(false);
   const [savedTrips, setSavedTrips] = useState([]);
   const [saveStatus, setSaveStatus] = useState(''); // '' | 'saving' | 'saved'
-  const [viewingSavedTrip, setViewingSavedTrip] = useState(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
   // Carousel state
@@ -82,6 +81,7 @@ export default function Dashboard({ user }) {
   }, [itinerary, goNext, goPrev]);
 
   // Reset activeDay when new itinerary loads
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setActiveDay(0); }, [itinerary]);
 
   // Fetch Maps API key

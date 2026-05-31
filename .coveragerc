@@ -1,0 +1,7 @@
+[run]
+omit =
+    tests/*
+    frontend/*
+
+[report]
+show_missing = True

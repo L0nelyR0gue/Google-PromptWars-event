@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import gsap from 'gsap';
-import { Zap, Map, Shield, Cloud, MapPin, Sparkles, Star, Navigation, Camera, Luggage, Compass, Users, Home, Plane, Ticket, Coffee, TreePalm, ArrowRight, Code, Database, Braces } from 'lucide-react';
+import { Zap, Map, Shield, Cloud, MapPin, Sparkles, Star, Navigation, Camera, Luggage, Compass, Users, Home, Plane, Ticket, Coffee, TreePalm, ArrowRight, Database, Braces } from 'lucide-react';
 import Login from '../components/Login';
 
 export default function Landing({ onLoginSuccess }) {
@@ -46,7 +46,7 @@ export default function Landing({ onLoginSuccess }) {
       { y: 0, opacity: 1, scale: 1, rotation: 0, duration: 1.2, stagger: 0.15, ease: "elastic.out(1, 0.4)" }
     );
 
-    doodlesRef.current.forEach((doodle, i) => {
+    doodlesRef.current.forEach((doodle) => {
       if(!doodle) return;
       
       const randomX = Math.random() * 40 - 20;

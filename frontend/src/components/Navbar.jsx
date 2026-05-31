@@ -1,11 +1,10 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Plane, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Login from './Login';
 import Notifications from './Notifications';
 
-export default function Navbar({ user, onSignOut, onOpenSettings, onOpenFriends }) {
+export default function Navbar({ user, onOpenSettings, onOpenFriends }) {
   return (
     <motion.nav 
       initial={{ y: -100, opacity: 0 }}

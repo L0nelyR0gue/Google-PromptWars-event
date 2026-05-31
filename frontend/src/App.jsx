@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import Navbar from './components/Navbar';
@@ -29,6 +29,7 @@ const CustomCursor = () => {
     return () => {
       window.removeEventListener('mousemove', moveCursor);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

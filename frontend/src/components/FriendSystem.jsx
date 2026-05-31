@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserPlus, Users, X, Search, Check, Loader2 } from 'lucide-react';
+import { UserPlus, Users, X, Check, Loader2 } from 'lucide-react';
 import {
   sendFriendRequest,
   subscribeToFriends,

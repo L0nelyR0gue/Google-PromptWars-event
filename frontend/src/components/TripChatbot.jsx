@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Loader2, MessageCircle, Sparkles } from 'lucide-react';
+import { Send, Loader2, Sparkles } from 'lucide-react';
 
 const API_BASE = window.location.origin;
 
